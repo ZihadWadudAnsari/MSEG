@@ -503,13 +503,14 @@
 **Test Case ID**: FR8-INT-TC34
 **Test Case Description**: Verify multiple sectors can be selected simultaneously
 **Test Case Procedure**:
-1. Create stocks in Technology, Healthcare, Finance, Energy sectors
-2. Open StockMarketPage
-3. Click "Filter by Sector"
-4. Select "Technology" and "Healthcare" checkboxes
-5. Apply filter
-6. Verify only Technology and Healthcare stocks displayed
-7. Count stocks to ensure correct number shown
+1. Login as manager (manager1/pass123)
+2. Create stocks in Technology, Healthcare, Finance, Energy sectors
+3. Navigate to StockMarketPage
+4. Click "Filter by Sector"
+5. Select "Technology" and "Healthcare" checkboxes
+6. Apply filter
+7. Verify only Technology and Healthcare stocks displayed
+8. Count stocks to ensure correct number shown
 **Expected Output**: Only stocks from selected sectors (Technology and Healthcare) are visible
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -574,14 +575,14 @@
 **Test Case ID**: FR12-INT-TC38
 **Test Case Description**: Verify sector benchmarking compares stock to sector average
 **Test Case Procedure**:
-1. Create 5 stocks: 3 in Technology sector, 2 in Healthcare
-2. Login as manager and navigate to StockMarketPage
-3. Select all 5 stocks
-4. Click Analysis → Sector Benchmarking
-5. Verify report calculates average 1Y return for Technology sector
-6. Verify report calculates average 1Y return for Healthcare sector
-7. Verify each stock shows difference from its sector average
-8. Manually verify calculations are correct
+1. Login as manager (manager1/pass123)
+2. Create 5 stocks: 3 in Technology sector, 2 in Healthcare
+3. Navigate to StockMarketPage
+5. Click Analysis → Sector Benchmarking
+6. Verify report calculates average 1Y return for Technology sector
+7. Verify report calculates average 1Y return for Healthcare sector
+8. Verify each stock shows difference from its sector average
+9. Manually verify calculations are correct
 **Expected Output**: Each stock compared to its own sector average, differences shown
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -590,11 +591,13 @@
 **Test Case ID**: FR13-INT-TC39
 **Test Case Description**: Verify consistency score based on return variance
 **Test Case Procedure**:
-1. Create 2 test stocks:
+1. Login as manager (manager1/pass123)
+2. Create 2 test stocks:
    - Stock A: 1M=5%, 6M=5.5%, 1Y=6% (low variance)
    - Stock B: 1M=20%, 6M=-10%, 1Y=5% (high variance)
-2. Select both stocks
-3. Click Analysis → Performance Consistency
+3. Navigate to StockMarketPage
+4. Select both stocks
+5. Click Analysis → Performance Consistency
 4. Verify Stock A has higher consistency score
 5. Verify score calculation: 100 - variance
 6. Manually calculate variance and verify
@@ -897,13 +900,14 @@
 **Test Case ID**: FR8-SYS-TC54
 **Test Case Description**: Verify multiple sectors can be filtered simultaneously
 **Test Case Procedure**:
-1. Create stocks: Technology (2), Healthcare (2), Finance (1), Energy (1)
-2. Navigate to Stock Market page
-3. Click "Filter by Sector"
-4. Select "Technology" and "Finance"
-5. Apply filter
-6. Verify 3 stocks displayed (2 Technology + 1 Finance)
-7. Verify Healthcare and Energy stocks hidden
+1. Login as manager (manager1/pass123)
+2. Create stocks: Technology (2), Healthcare (2), Finance (1), Energy (1)
+3. Navigate to Stock Market page
+4. Click "Filter by Sector"
+5. Select "Technology" and "Finance"
+6. Apply filter
+7. Verify 3 stocks displayed (2 Technology + 1 Finance)
+8. Verify Healthcare and Energy stocks hidden
 **Expected Output**: Multiple sector selection shows stocks from all selected sectors
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -971,18 +975,19 @@
 **Test Case ID**: FR12-SYS-TC58
 **Test Case Description**: Verify sector benchmarking with stocks from different sectors
 **Test Case Procedure**:
-1. Create stocks:
+1. Login as manager (manager1/pass123)
+2. Create stocks:
    - Tech A: 1Y return = 10%
    - Tech B: 1Y return = 20%
    - Healthcare A: 1Y return = 5%
    - Healthcare B: 1Y return = 15%
-2. Login as manager
-3. Select all 4 stocks
-4. Click Analysis → Sector Benchmarking
-5. Verify report calculates:
+3. Navigate to StockMarketPage
+4. Select all 4 stocks
+5. Click Analysis → Sector Benchmarking
+6. Verify report calculates:
    - Technology average = 15% (average of 10% and 20%)
    - Healthcare average = 10% (average of 5% and 15%)
-6. Verify each stock shows:
+7. Verify each stock shows:
    - Tech A: -5% vs sector (10% - 15%)
    - Tech B: +5% vs sector (20% - 15%)
    - Healthcare A: -5% vs sector (5% - 10%)
@@ -995,15 +1000,17 @@
 **Test Case ID**: FR13-SYS-TC59
 **Test Case Description**: Verify consistency score correctly identifies stable vs volatile stocks
 **Test Case Procedure**:
-1. Create 2 stocks:
+1. Login as manager (manager1/pass123)
+2. Create 2 stocks:
    - Stable Stock: 1M=5%, 6M=5.2%, 1Y=5.5% (very consistent)
    - Volatile Stock: 1M=30%, 6M=-10%, 1Y=8% (inconsistent)
-2. Select both stocks
-3. Click Analysis → Performance Consistency
-4. Verify Stable Stock has high consistency score (close to 100)
-5. Verify Volatile Stock has lower consistency score
-6. Verify score formula: 100 - variance
-7. Manually calculate variance for both stocks and verify
+3. Navigate to StockMarketPage
+4. Select both stocks
+5. Click Analysis → Performance Consistency
+6. Verify Stable Stock has high consistency score (close to 100)
+7. Verify Volatile Stock has lower consistency score
+8. Verify score formula: 100 - variance
+9. Manually calculate variance for both stocks and verify
 **Expected Output**: Stable stock has significantly higher consistency score than volatile stock
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1129,7 +1136,7 @@
 **Test Case Description**: Verify stock listing loads within 2 seconds under normal load
 **Test Case Procedure**:
 1. Create 100 test stocks with full price history
-2. Login as manager
+2. Login as manager (manager1/pass123)
 3. Start timer
 4. Navigate to Stock Market page
 5. Stop timer when all stocks rendered in table
@@ -1145,7 +1152,7 @@
 **Test Case Description**: Verify application review screen loads within 2 seconds
 **Test Case Procedure**:
 1. Create 50 pending applications
-2. Login as manager
+2. Login as manager (manager1/pass123)
 3. Start timer
 4. Navigate to Manager Portal page
 5. Stop timer when all pending applications rendered
@@ -1198,16 +1205,17 @@
 **Test Case ID**: NR5-SYS-TC70
 **Test Case Description**: Verify theme toggle provides good visibility in both modes
 **Test Case Procedure**:
-1. Login to application (starts in light mode)
-2. Verify all text is readable against light background
-3. Click theme toggle button in header
-4. Verify application switches to dark mode
-5. Verify all text is readable against dark background
-6. Verify colors provide good contrast
-7. Navigate through different pages
-8. Verify theme persists across page changes
-9. Toggle back to light mode
-10. Verify smooth transition
+1. Login as company (company1/pass456)
+2. Verify application starts in light mode
+3. Verify all text is readable against light background
+4. Click theme toggle button in header
+5. Verify application switches to dark mode
+6. Verify all text is readable against dark background
+7. Verify colors provide good contrast
+8. Navigate through different pages
+9. Verify theme persists across page changes
+10. Toggle back to light mode
+11. Verify smooth transition
 **Expected Output**: Both themes provide excellent readability and visual comfort
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1242,10 +1250,11 @@
 2. Approve 500 of them (creates 500 stocks with 366 prices each = 183,000 price records)
 3. Verify database file size is manageable (< 500MB)
 4. Launch application
-5. Verify startup time is reasonable
-6. Navigate to manager portal
-7. Verify pending/approved/rejected lists load
-8. Test database query performance with large dataset
+5. Login as manager (manager1/pass123)
+6. Verify startup time is reasonable
+7. Navigate to manager portal
+8. Verify pending/approved/rejected lists load
+9. Test database query performance with large dataset
 **Expected Output**: System scales to 1000 applications and 500 stocks without redesign
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1276,16 +1285,18 @@
 **Test Case ID**: NR7-SYS-TC74
 **Test Case Description**: Verify sector benchmarking calculations are repeatable
 **Test Case Procedure**:
-1. Create 5 stocks in Technology sector with known returns
-2. Run Sector Benchmarking analysis
-3. Record sector average and individual stock differences
-4. Run analysis again
-5. Verify identical results
-6. Add 6th stock to Technology sector
-7. Run analysis
-8. Verify sector average recalculated correctly
-9. Remove 6th stock
-10. Verify sector average returns to original value
+1. Login as manager (manager1/pass123)
+2. Create 5 stocks in Technology sector with known returns
+3. Navigate to StockMarketPage and select all 5 stocks
+4. Run Sector Benchmarking analysis
+5. Record sector average and individual stock differences
+6. Run analysis again
+7. Verify identical results
+8. Add 6th stock to Technology sector
+9. Run analysis
+10. Verify sector average recalculated correctly
+11. Remove 6th stock
+12. Verify sector average returns to original value
 **Expected Output**: Benchmarking calculations are deterministic and update correctly with data changes
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1431,12 +1442,14 @@
 **Test Case ID**: NEG-TC82
 **Test Case Description**: Verify system handles very long input strings
 **Test Case Procedure**:
-1. Create application with 1000-character company name
-2. Attempt to submit
-3. Verify system handles appropriately (truncation or validation error)
-4. Test with maximum username length (10 chars) and 11 chars
-5. Test password with 31 characters (max is 30)
-6. Verify appropriate validation messages
+1. Login as company (company1/pass456)
+2. Navigate to application form
+3. Create application with 1000-character company name
+4. Attempt to submit
+5. Verify system handles appropriately (truncation or validation error)
+6. Test with maximum username length (10 chars) and 11 chars during registration
+7. Test password with 31 characters (max is 30) during registration
+8. Verify appropriate validation messages
 **Expected Output**: System enforces reasonable length limits with clear messages
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
