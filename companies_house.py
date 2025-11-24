@@ -149,10 +149,8 @@ def _verify_offline(name: str, company_no: str) -> Tuple[bool, List[str]]:
         normalized_ch_name = _normalize_name(ch_name)
         normalized_input_name = _normalize_name(name)
 
-        # Allow flexible matching:
-        # 1. Input matches the beginning of the company name (partial match)
-        # 2. Input exactly matches the full company name
-        if normalized_ch_name.startswith(normalized_input_name) or normalized_ch_name == normalized_input_name:
+        # Exact match required after normalization (case-insensitive, ignoring quotes)
+        if normalized_ch_name == normalized_input_name:
             return True, []
 
         return False, ["Company name does not match the offline Companies House dataset for that number."]
@@ -180,8 +178,8 @@ def verify_company_against_ch(name: str, company_no: str) -> Tuple[bool, List[st
             normalized_ch_name = _normalize_name(ch_name)
             normalized_input_name = _normalize_name(name)
 
-            # Allow flexible matching: partial or full
-            if normalized_ch_name.startswith(normalized_input_name) or normalized_ch_name == normalized_input_name:
+            # Exact match required after normalization (case-insensitive, ignoring quotes)
+            if normalized_ch_name == normalized_input_name:
                 return True, []
 
             return False, ["Company name does not match the Companies House record for that number."]
