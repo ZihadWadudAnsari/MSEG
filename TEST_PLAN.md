@@ -219,25 +219,10 @@
 
 ---
 
-### FR6: Edit Stock Details
+### FR6: Remove Stock Listing
 
-#### TC17: Stock Update Function Exists
+#### TC17: Stock Deletion Function
 **Test Case ID**: FR6-TC17
-**Test Case Description**: Verify stock update functionality (Note: May not be implemented)
-**Test Case Procedure**:
-1. Check db.py for stock update function
-2. Check stock_market.py for edit UI
-3. Document findings
-**Expected Output**: Stock update function allows editing ticker, name, sector, shares, valuation
-**Actual Result**: _(To be filled during testing - currently NOT implemented per code review)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR7: Remove Stock Listing
-
-#### TC18: Stock Deletion Function
-**Test Case ID**: FR7-TC18
 **Test Case Description**: Verify stock can be deleted from database
 **Test Case Procedure**:
 1. Import db module
@@ -251,10 +236,10 @@
 
 ---
 
-### FR8: View All Active Stock Listings
+### FR7: View All Active Stock Listings
 
-#### TC19: Retrieve All Stocks
-**Test Case ID**: FR8-TC19
+#### TC18: Retrieve All Stocks
+**Test Case ID**: FR7-TC18
 **Test Case Description**: Verify system retrieves all stocks with prices and sectors
 **Test Case Procedure**:
 1. Import db module
@@ -267,10 +252,10 @@
 
 ---
 
-### FR9-FR13: Stock Analysis Functions
+### FR8-FR12: Stock Analysis Functions
 
-#### TC20: Time-framed Returns Calculation (1 Month)
-**Test Case ID**: FR9-TC20
+#### TC19: Time-framed Returns Calculation (1 Month)
+**Test Case ID**: FR8-TC19
 **Test Case Description**: Verify 1-month return calculation is accurate
 **Test Case Procedure**:
 1. Import db module
@@ -282,8 +267,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC21: Time-framed Returns Calculation (6 Months)
-**Test Case ID**: FR9-TC21
+#### TC20: Time-framed Returns Calculation (6 Months)
+**Test Case ID**: FR8-TC20
 **Test Case Description**: Verify 6-month return calculation is accurate
 **Test Case Procedure**:
 1. Import db module
@@ -295,8 +280,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC22: Time-framed Returns Calculation (1 Year)
-**Test Case ID**: FR9-TC22
+#### TC21: Time-framed Returns Calculation (1 Year)
+**Test Case ID**: FR8-TC21
 **Test Case Description**: Verify 1-year return calculation is accurate
 **Test Case Procedure**:
 1. Import db module
@@ -308,8 +293,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC23: 24-Hour Change Calculation
-**Test Case ID**: FR9-TC23
+#### TC22: 24-Hour Change Calculation
+**Test Case ID**: FR8-TC22
 **Test Case Description**: Verify 24-hour price change calculation
 **Test Case Procedure**:
 1. Import db module
@@ -325,8 +310,8 @@
 
 ### NR2: Data Integrity Validation
 
-#### TC24: Positive Shares Validation
-**Test Case ID**: NR2-TC24
+#### TC23: Positive Shares Validation
+**Test Case ID**: NR2-TC23
 **Test Case Description**: Verify shares outstanding must be positive
 **Test Case Procedure**:
 1. Import db module
@@ -336,8 +321,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC25: Positive Valuation Validation
-**Test Case ID**: NR2-TC25
+#### TC24: Positive Valuation Validation
+**Test Case ID**: NR2-TC24
 **Test Case Description**: Verify total valuation must be positive
 **Test Case Procedure**:
 1. Import db module
@@ -347,8 +332,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC26: Positive Price Validation
-**Test Case ID**: NR2-TC26
+#### TC25: Positive Price Validation
+**Test Case ID**: NR2-TC25
 **Test Case Description**: Verify stock prices must be positive
 **Test Case Procedure**:
 1. Import db module
@@ -362,8 +347,8 @@
 
 ### NR7: Reliability - Deterministic Calculations
 
-#### TC27: Return Calculation Consistency
-**Test Case ID**: NR7-TC27
+#### TC26: Return Calculation Consistency
+**Test Case ID**: NR7-TC26
 **Test Case Description**: Verify return calculations are repeatable with same input
 **Test Case Procedure**:
 1. Import db module
@@ -380,8 +365,8 @@
 
 ### FR1-FR3: Application Workflow Integration
 
-#### TC28: End-to-End Application Submission and Approval
-**Test Case ID**: FR1-FR2-INT-TC28
+#### TC27: End-to-End Application Submission and Approval
+**Test Case ID**: FR1-FR2-INT-TC27
 **Test Case Description**: Verify complete workflow from submission to approval with database persistence
 **Test Case Procedure**:
 1. Login as company user
@@ -400,8 +385,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC29: End-to-End Application Submission and Rejection
-**Test Case ID**: FR1-FR3-INT-TC29
+#### TC28: End-to-End Application Submission and Rejection
+**Test Case ID**: FR1-FR3-INT-TC28
 **Test Case Description**: Verify complete workflow from submission to rejection with notes
 **Test Case Procedure**:
 1. Login as company user
@@ -424,8 +409,8 @@
 
 ### FR4-FR5: Validation and Compliance Integration
 
-#### TC30: Companies House Integration with Offline Fallback
-**Test Case ID**: FR5-INT-TC30
+#### TC29: Companies House Integration with Offline Fallback
+**Test Case ID**: FR5-INT-TC29
 **Test Case Description**: Verify system falls back to offline dataset when API unavailable
 **Test Case Procedure**:
 1. Disable network connection or remove API key
@@ -438,8 +423,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC31: Attachment Storage and Retrieval
-**Test Case ID**: FR4-INT-TC31
+#### TC30: Attachment Storage and Retrieval
+**Test Case ID**: FR4-INT-TC30
 **Test Case Description**: Verify documents attached to applications are stored and retrievable
 **Test Case Procedure**:
 1. Login as company user
@@ -458,10 +443,10 @@
 
 ---
 
-### FR6-FR7: Stock CRUD Integration
+### FR6: Stock Deletion Integration
 
-#### TC32: Stock Deletion Cascade to Prices
-**Test Case ID**: FR7-INT-TC32
+#### TC31: Stock Deletion Cascade to Prices
+**Test Case ID**: FR6-INT-TC31
 **Test Case Description**: Verify deleting stock also removes all price history
 **Test Case Procedure**:
 1. Login as manager
@@ -479,10 +464,10 @@
 
 ---
 
-### FR8: Stock Listing with Filtering
+### FR7: Stock Listing with Filtering
 
-#### TC33: Sector Filter Application
-**Test Case ID**: FR8-INT-TC33
+#### TC32: Sector Filter Application
+**Test Case ID**: FR7-INT-TC32
 **Test Case Description**: Verify sector filter correctly filters displayed stocks
 **Test Case Procedure**:
 1. Login as manager
@@ -499,8 +484,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC34: Multi-Sector Filter
-**Test Case ID**: FR8-INT-TC34
+#### TC33: Multi-Sector Filter
+**Test Case ID**: FR7-INT-TC33
 **Test Case Description**: Verify multiple sectors can be selected simultaneously
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -517,10 +502,10 @@
 
 ---
 
-### FR9: Multi-Stock Selection for Analysis
+### FR8: Multi-Stock Selection for Analysis
 
-#### TC35: Select Multiple Stocks for Analysis
-**Test Case ID**: FR9-INT-TC35
+#### TC34: Select Multiple Stocks for Analysis
+**Test Case ID**: FR8-INT-TC34
 **Test Case Description**: Verify multiple stocks can be selected via checkboxes
 **Test Case Procedure**:
 1. Login as manager
@@ -537,10 +522,10 @@
 
 ---
 
-### FR10-FR13: Analysis Report Generation
+### FR9-FR12: Analysis Report Generation
 
-#### TC36: Time-framed Returns Report Generation
-**Test Case ID**: FR10-INT-TC36
+#### TC35: Time-framed Returns Report Generation
+**Test Case ID**: FR9-INT-TC35
 **Test Case Description**: Verify time-framed returns report displays correct data for selected stocks
 **Test Case Procedure**:
 1. Login as manager
@@ -557,8 +542,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC37: Valuation Comparison Report
-**Test Case ID**: FR11-INT-TC37
+#### TC36: Valuation Comparison Report
+**Test Case ID**: FR10-INT-TC36
 **Test Case Description**: Verify valuation comparison shows current values and growth
 **Test Case Procedure**:
 1. Login as manager
@@ -571,8 +556,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC38: Sector Benchmarking Report
-**Test Case ID**: FR12-INT-TC38
+#### TC37: Sector Benchmarking Report
+**Test Case ID**: FR11-INT-TC37
 **Test Case Description**: Verify sector benchmarking compares stock to sector average
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -587,8 +572,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC39: Performance Consistency Score Calculation
-**Test Case ID**: FR13-INT-TC39
+#### TC38: Performance Consistency Score Calculation
+**Test Case ID**: FR12-INT-TC38
 **Test Case Description**: Verify consistency score based on return variance
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -605,8 +590,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC40: Market Report Generation (No Selection Required)
-**Test Case ID**: FR13-INT-TC40
+#### TC39: Market Report Generation (No Selection Required)
+**Test Case ID**: FR12-INT-TC39
 **Test Case Description**: Verify market report analyzes entire market regardless of selection
 **Test Case Procedure**:
 1. Create stocks across multiple sectors
@@ -627,8 +612,8 @@
 
 ### NR1: Privacy - Data Handling
 
-#### TC41: Password Hashing on Storage
-**Test Case ID**: NR1-INT-TC41
+#### TC40: Password Hashing on Storage
+**Test Case ID**: NR1-INT-TC40
 **Test Case Description**: Verify passwords are hashed before storage
 **Test Case Procedure**:
 1. Register new company user with password "TestPass123"
@@ -645,8 +630,8 @@
 
 ### NR3: Availability - Database Connection
 
-#### TC42: Database Initialization on Startup
-**Test Case ID**: NR3-INT-TC42
+#### TC41: Database Initialization on Startup
+**Test Case ID**: NR3-INT-TC41
 **Test Case Description**: Verify database and tables are created if missing
 **Test Case Procedure**:
 1. Delete data/mseg.db file if exists
@@ -665,8 +650,8 @@
 
 ### FR1-FR3: Complete Application Review Workflow
 
-#### TC43: Company Submits Application - Manager Approves - Stock Appears
-**Test Case ID**: FR1-FR2-SYS-TC43
+#### TC42: Company Submits Application - Manager Approves - Stock Appears
+**Test Case ID**: FR1-FR2-SYS-TC42
 **Test Case Description**: End-to-end system test of successful application flow
 **Test Case Procedure**:
 1. Launch MSEG application (python main.py)
@@ -705,8 +690,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC44: Company Submits Application - Manager Rejects - No Stock Created
-**Test Case ID**: FR1-FR3-SYS-TC44
+#### TC43: Company Submits Application - Manager Rejects - No Stock Created
+**Test Case ID**: FR1-FR3-SYS-TC43
 **Test Case Description**: End-to-end system test of application rejection flow
 **Test Case Procedure**:
 1. Launch MSEG application
@@ -733,8 +718,8 @@
 
 ### FR4-FR5: Validation and Compliance System Tests
 
-#### TC45: Duplicate Ticker Submission Blocked
-**Test Case ID**: FR4-SYS-TC45
+#### TC44: Duplicate Ticker Submission Blocked
+**Test Case ID**: FR4-SYS-TC44
 **Test Case Description**: Verify system prevents duplicate ticker at submission time
 **Test Case Procedure**:
 1. Login as manager and create stock with ticker "DUPL"
@@ -750,8 +735,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC46: Unrealistic Valuation Blocked
-**Test Case ID**: FR4-SYS-TC46
+#### TC45: Unrealistic Valuation Blocked
+**Test Case ID**: FR4-SYS-TC45
 **Test Case Description**: Verify valuations outside 100M-500B range are rejected
 **Test Case Procedure**:
 1. Login as company
@@ -767,8 +752,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC47: Company Registration with Invalid Incorporation Date
-**Test Case ID**: FR5-SYS-TC47
+#### TC46: Company Registration with Invalid Incorporation Date
+**Test Case ID**: FR5-SYS-TC46
 **Test Case Description**: Verify company registration validates incorporation date
 **Test Case Procedure**:
 1. Launch application
@@ -783,8 +768,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC48: Companies House Verification (Online API)
-**Test Case ID**: FR5-SYS-TC48
+#### TC47: Companies House Verification (Online API)
+**Test Case ID**: FR5-SYS-TC47
 **Test Case Description**: Verify online Companies House API verification works
 **Test Case Procedure**:
 1. Ensure API key is configured in data/ch_api_key.txt
@@ -799,8 +784,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC49: Companies House Verification (Offline Fallback)
-**Test Case ID**: FR5-SYS-TC49
+#### TC48: Companies House Verification (Offline Fallback)
+**Test Case ID**: FR5-SYS-TC48
 **Test Case Description**: Verify offline dataset validation when API unavailable
 **Test Case Procedure**:
 1. Remove API key file or disable internet
@@ -816,10 +801,10 @@
 
 ---
 
-### FR6-FR7: Stock Management System Tests
+### FR6: Stock Management System Tests
 
-#### TC50: Delete Stock with Confirmation
-**Test Case ID**: FR7-SYS-TC50
+#### TC49: Delete Stock with Confirmation
+**Test Case ID**: FR6-SYS-TC49
 **Test Case Description**: Verify stock deletion requires confirmation and removes stock
 **Test Case Procedure**:
 1. Login as manager
@@ -841,8 +826,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC51: Delete Multiple Stocks Simultaneously
-**Test Case ID**: FR7-SYS-TC51
+#### TC50: Delete Multiple Stocks Simultaneously
+**Test Case ID**: FR6-SYS-TC50
 **Test Case Description**: Verify multiple stocks can be deleted at once
 **Test Case Procedure**:
 1. Login as manager
@@ -859,10 +844,10 @@
 
 ---
 
-### FR8: Stock Listing and Filtering System Tests
+### FR7: Stock Listing and Filtering System Tests
 
-#### TC52: Stock Listing Displays All Fields
-**Test Case ID**: FR8-SYS-TC52
+#### TC51: Stock Listing Displays All Fields
+**Test Case ID**: FR7-SYS-TC51
 **Test Case Description**: Verify stock listing table shows all required information
 **Test Case Procedure**:
 1. Login as manager
@@ -877,8 +862,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC53: Filter by Single Sector
-**Test Case ID**: FR8-SYS-TC53
+#### TC52: Filter by Single Sector
+**Test Case ID**: FR7-SYS-TC52
 **Test Case Description**: Verify sector filtering works correctly for single sector
 **Test Case Procedure**:
 1. Login as manager
@@ -896,8 +881,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC54: Filter by Multiple Sectors
-**Test Case ID**: FR8-SYS-TC54
+#### TC53: Filter by Multiple Sectors
+**Test Case ID**: FR7-SYS-TC53
 **Test Case Description**: Verify multiple sectors can be filtered simultaneously
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -912,8 +897,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC55: Stock Listing as Company (Read-Only Mode)
-**Test Case ID**: FR8-SYS-TC55
+#### TC54: Stock Listing as Company (Read-Only Mode)
+**Test Case ID**: FR7-SYS-TC54
 **Test Case Description**: Verify company users see stocks in read-only mode without CRUD buttons
 **Test Case Procedure**:
 1. Login as company user
@@ -930,10 +915,10 @@
 
 ---
 
-### FR9-FR13: Stock Analysis System Tests
+### FR8-FR12: Stock Analysis System Tests
 
-#### TC56: Time-framed Returns Analysis for Multiple Stocks
-**Test Case ID**: FR9-SYS-TC56
+#### TC55: Time-framed Returns Analysis for Multiple Stocks
+**Test Case ID**: FR8-SYS-TC55
 **Test Case Description**: End-to-end test of time-framed returns analysis
 **Test Case Procedure**:
 1. Login as manager
@@ -954,8 +939,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC57: Valuation Comparison Analysis
-**Test Case ID**: FR11-SYS-TC57
+#### TC56: Valuation Comparison Analysis
+**Test Case ID**: FR10-SYS-TC56
 **Test Case Description**: End-to-end test of valuation comparison
 **Test Case Procedure**:
 1. Login as manager
@@ -971,8 +956,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC58: Sector Benchmarking with Mixed Sectors
-**Test Case ID**: FR12-SYS-TC58
+#### TC57: Sector Benchmarking with Mixed Sectors
+**Test Case ID**: FR11-SYS-TC57
 **Test Case Description**: Verify sector benchmarking with stocks from different sectors
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -996,8 +981,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC59: Performance Consistency Score Interpretation
-**Test Case ID**: FR13-SYS-TC59
+#### TC58: Performance Consistency Score Interpretation
+**Test Case ID**: FR12-SYS-TC58
 **Test Case Description**: Verify consistency score correctly identifies stable vs volatile stocks
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -1015,8 +1000,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC60: Generate Market Report (All Stocks Analysis)
-**Test Case ID**: FR13-SYS-TC60
+#### TC59: Generate Market Report (All Stocks Analysis)
+**Test Case ID**: FR12-SYS-TC59
 **Test Case Description**: Verify market report analyzes entire market without selection
 **Test Case Procedure**:
 1. Login as manager
@@ -1040,8 +1025,8 @@
 
 ### NR1: Privacy and Data Handling
 
-#### TC61: Password Not Visible in UI
-**Test Case ID**: NR1-SYS-TC61
+#### TC60: Password Not Visible in UI
+**Test Case ID**: NR1-SYS-TC60
 **Test Case Description**: Verify passwords are masked in all input fields
 **Test Case Procedure**:
 1. Launch application
@@ -1056,8 +1041,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC62: No Sensitive Data in Error Messages
-**Test Case ID**: NR1-SYS-TC62
+#### TC61: No Sensitive Data in Error Messages
+**Test Case ID**: NR1-SYS-TC61
 **Test Case Description**: Verify error messages don't expose sensitive information
 **Test Case Procedure**:
 1. Attempt login with incorrect username
@@ -1074,8 +1059,8 @@
 
 ### NR2: Data Integrity System Tests
 
-#### TC63: Prevent Negative Stock Values Throughout System
-**Test Case ID**: NR2-SYS-TC63
+#### TC62: Prevent Negative Stock Values Throughout System
+**Test Case ID**: NR2-SYS-TC62
 **Test Case Description**: Verify system prevents negative values at all entry points
 **Test Case Procedure**:
 1. Login as company
@@ -1095,8 +1080,8 @@
 
 ### NR3: Availability System Tests
 
-#### TC64: Application Starts Without Errors
-**Test Case ID**: NR3-SYS-TC64
+#### TC63: Application Starts Without Errors
+**Test Case ID**: NR3-SYS-TC63
 **Test Case Description**: Verify application launches successfully and is available
 **Test Case Procedure**:
 1. Ensure data directory exists
@@ -1110,8 +1095,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC65: Database Recovery After Corruption
-**Test Case ID**: NR3-SYS-TC65
+#### TC64: Database Recovery After Corruption
+**Test Case ID**: NR3-SYS-TC64
 **Test Case Description**: Verify system handles database corruption gracefully
 **Test Case Procedure**:
 1. Close application
@@ -1131,8 +1116,8 @@
 
 ### NR4: Performance System Tests
 
-#### TC66: Stock Listing Load Time
-**Test Case ID**: NR4-SYS-TC66
+#### TC65: Stock Listing Load Time
+**Test Case ID**: NR4-SYS-TC65
 **Test Case Description**: Verify stock listing loads within 2 seconds under normal load
 **Test Case Procedure**:
 1. Create 100 test stocks with full price history
@@ -1147,8 +1132,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC67: Application Review Page Load Time
-**Test Case ID**: NR4-SYS-TC67
+#### TC66: Application Review Page Load Time
+**Test Case ID**: NR4-SYS-TC66
 **Test Case Description**: Verify application review screen loads within 2 seconds
 **Test Case Procedure**:
 1. Create 50 pending applications
@@ -1167,8 +1152,8 @@
 
 ### NR5: Usability System Tests
 
-#### TC68: Clear Labels and Intuitive Navigation
-**Test Case ID**: NR5-SYS-TC68
+#### TC67: Clear Labels and Intuitive Navigation
+**Test Case ID**: NR5-SYS-TC67
 **Test Case Description**: Verify all interface elements have clear, understandable labels
 **Test Case Procedure**:
 1. Launch application
@@ -1185,8 +1170,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC69: Consistent Filter Behavior Across System
-**Test Case ID**: NR5-SYS-TC69
+#### TC68: Consistent Filter Behavior Across System
+**Test Case ID**: NR5-SYS-TC68
 **Test Case Description**: Verify filter dialogs work consistently
 **Test Case Procedure**:
 1. Login as manager
@@ -1201,8 +1186,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC70: Theme Switching (Light/Dark Mode)
-**Test Case ID**: NR5-SYS-TC70
+#### TC69: Theme Switching (Light/Dark Mode)
+**Test Case ID**: NR5-SYS-TC69
 **Test Case Description**: Verify theme toggle provides good visibility in both modes
 **Test Case Procedure**:
 1. Login as company (company1/pass456)
@@ -1224,8 +1209,8 @@
 
 ### NR6: Scalability System Tests
 
-#### TC71: System Performance with 500 Stocks
-**Test Case ID**: NR6-SYS-TC71
+#### TC70: System Performance with 500 Stocks
+**Test Case ID**: NR6-SYS-TC70
 **Test Case Description**: Verify system handles large number of stocks without major degradation
 **Test Case Procedure**:
 1. Create script to generate 500 stocks with full price histories
@@ -1242,8 +1227,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC72: Database Growth with 1000 Applications
-**Test Case ID**: NR6-SYS-TC72
+#### TC71: Database Growth with 1000 Applications
+**Test Case ID**: NR6-SYS-TC71
 **Test Case Description**: Verify database handles growth in applications and stocks
 **Test Case Procedure**:
 1. Create script to generate 1000 applications
@@ -1263,8 +1248,8 @@
 
 ### NR7: Reliability System Tests
 
-#### TC73: Return Calculation Repeatability
-**Test Case ID**: NR7-SYS-TC73
+#### TC72: Return Calculation Repeatability
+**Test Case ID**: NR7-SYS-TC72
 **Test Case Description**: Verify return calculations are deterministic and repeatable
 **Test Case Procedure**:
 1. Create stock with fixed price history
@@ -1281,8 +1266,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC74: Sector Benchmarking Calculation Determinism
-**Test Case ID**: NR7-SYS-TC74
+#### TC73: Sector Benchmarking Calculation Determinism
+**Test Case ID**: NR7-SYS-TC73
 **Test Case Description**: Verify sector benchmarking calculations are repeatable
 **Test Case Procedure**:
 1. Login as manager (manager1/pass123)
@@ -1301,8 +1286,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC75: Price History Generation Consistency
-**Test Case ID**: NR7-SYS-TC75
+#### TC74: Price History Generation Consistency
+**Test Case ID**: NR7-SYS-TC74
 **Test Case Description**: Verify price history generation follows specified random walk model
 **Test Case Procedure**:
 1. Create application with shares=1,000,000 and valuation=500,000,000
@@ -1321,8 +1306,8 @@
 
 ## CROSS-FUNCTIONAL SYSTEM TESTS
 
-### TC76: Role-Based Access Control
-**Test Case ID**: RBAC-SYS-TC76
+### TC75: Role-Based Access Control
+**Test Case ID**: RBAC-SYS-TC75
 **Test Case Description**: Verify company and manager users have appropriate access levels
 **Test Case Procedure**:
 1. Login as company user
@@ -1338,8 +1323,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-### TC77: Data Persistence Across Sessions
-**Test Case ID**: PERSIST-SYS-TC77
+### TC76: Data Persistence Across Sessions
+**Test Case ID**: PERSIST-SYS-TC76
 **Test Case Description**: Verify all data persists after application restart
 **Test Case Procedure**:
 1. Login as company and create application
@@ -1358,8 +1343,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-### TC78: Concurrent User Workflow (Sequential)
-**Test Case ID**: CONCURRENT-SYS-TC78
+### TC77: Concurrent User Workflow (Sequential)
+**Test Case ID**: CONCURRENT-SYS-TC77
 **Test Case Description**: Verify two users can work with system sequentially without conflicts
 **Test Case Procedure**:
 1. User A (company) logs in and submits application
@@ -1376,8 +1361,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-### TC79: End-to-End Full System Workflow
-**Test Case ID**: E2E-SYS-TC79
+### TC78: End-to-End Full System Workflow
+**Test Case ID**: E2E-SYS-TC78
 **Test Case Description**: Complete system test covering all major features
 **Test Case Procedure**:
 1. Register new company account
@@ -1408,8 +1393,8 @@
 
 ## NEGATIVE TESTING
 
-### TC80: SQL Injection Prevention
-**Test Case ID**: SEC-NEG-TC80
+### TC79: SQL Injection Prevention
+**Test Case ID**: SEC-NEG-TC79
 **Test Case Description**: Verify system is protected against SQL injection attacks
 **Test Case Procedure**:
 1. Attempt login with username: `admin' OR '1'='1`
@@ -1423,8 +1408,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-### TC81: Invalid File Attachment Handling
-**Test Case ID**: NEG-TC81
+### TC80: Invalid File Attachment Handling
+**Test Case ID**: NEG-TC80
 **Test Case Description**: Verify system handles invalid attachment files gracefully
 **Test Case Procedure**:
 1. Login as company
@@ -1438,8 +1423,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-### TC82: Boundary Testing - Maximum String Lengths
-**Test Case ID**: NEG-TC82
+### TC81: Boundary Testing - Maximum String Lengths
+**Test Case ID**: NEG-TC81
 **Test Case Description**: Verify system handles very long input strings
 **Test Case Procedure**:
 1. Login as company (company1/pass456)
@@ -1458,13 +1443,13 @@
 
 ## TEST SUMMARY
 
-**Total Test Cases**: 82
+**Total Test Cases**: 81
 
 ### Breakdown by Testing Type:
-- **Unit Testing**: 27 test cases (TC1-TC27)
-- **Integration Testing**: 15 test cases (TC28-TC42)
-- **System Testing**: 38 test cases (TC43-TC80)
-- **Negative Testing**: 3 test cases (TC81-TC83)
+- **Unit Testing**: 26 test cases (TC1-TC26)
+- **Integration Testing**: 15 test cases (TC27-TC41)
+- **System Testing**: 37 test cases (TC42-TC78)
+- **Negative Testing**: 3 test cases (TC79-TC81)
 
 ### Breakdown by Requirement:
 - **FR1**: 1 test case
@@ -1472,10 +1457,9 @@
 - **FR3**: 1 test case
 - **FR4**: 6 test cases
 - **FR5**: 5 test cases
-- **FR6**: 1 test case
-- **FR7**: 3 test cases
-- **FR8**: 5 test cases
-- **FR9-FR13**: 9 test cases
+- **FR6**: 3 test cases (stock deletion)
+- **FR7**: 5 test cases (stock listing and filtering)
+- **FR8-FR12**: 9 test cases (stock analysis)
 - **NR1**: 3 test cases
 - **NR2**: 4 test cases
 - **NR3**: 2 test cases
