@@ -556,22 +556,21 @@
 **Test Case ID**: FR6-SYS-TC49
 **Test Case Description**: Verify stock deletion requires confirmation and removes stock
 **Test Case Procedure**:
-1. Login as manager
+1. Login as Stock Manager
 2. Navigate to Stock Market page
-3. Verify at least one stock exists
-4. Select stock checkbox
+3. Verify stocks are displayed
+4. Select a stock checkbox
 5. Click "Delete Selected" button
-6. Verify confirmation dialog appears asking to confirm deletion
-7. Click "Cancel"
-8. Verify stock is NOT deleted
-9. Select stock again
+6. Verify confirmation dialog appears
+7. Click "Cancel" or "No"
+8. Verify stock is still in listing
+9. Select stock checkbox again
 10. Click "Delete Selected"
-11. Click "Yes" to confirm
-12. Verify success message appears
-13. Verify stock no longer appears in listing
-14. Refresh page
-15. Verify stock still deleted (persistent)
-**Expected Output**: Deletion requires confirmation, successfully removes stock from system
+11. Click "Yes" or "Confirm" to confirm deletion
+12. Verify stock no longer appears in listing
+13. Refresh page to confirm deletion is permanent
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Deletion requires confirmation, cancelling preserves stock, confirming removes stock permanently
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -581,14 +580,14 @@
 **Test Case ID**: FR6-SYS-TC50
 **Test Case Description**: Verify multiple stocks can be deleted at once
 **Test Case Procedure**:
-1. Login as manager
-2. Create 3 test stocks: "DEL1", "DEL2", "DEL3"
-3. Navigate to Stock Market page
-4. Select checkboxes for all 3 stocks
-5. Click "Delete Selected"
-6. Confirm deletion
-7. Verify all 3 stocks removed from listing
-8. Query database to verify all 3 deleted
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select checkboxes for 3 different stocks
+4. Click "Delete Selected"
+5. Confirm deletion
+6. Verify all 3 stocks are removed from listing
+7. Refresh page to confirm deletion is permanent
+**Test Data**: Manager Username: manager1, Manager Password: pass123
 **Expected Output**: All selected stocks deleted in single operation
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -655,15 +654,15 @@
 **Test Case ID**: FR7-SYS-TC51
 **Test Case Description**: Verify stock listing table shows all required information
 **Test Case Procedure**:
-1. Login as manager
-2. Create stock with known values
-3. Navigate to Stock Market page
-4. Verify table columns: Ticker, Price, Sector, 24hr %, 1M %, 6M %, 1Y %
-5. Verify all data displays correctly for created stock
-6. Verify price formatted with 2 decimal places
-7. Verify percentages show + or - signs
-8. Verify color coding: green for positive returns, red for negative
-**Expected Output**: Stock listing displays all fields with proper formatting and color coding
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify table displays columns: Ticker, Price, Sector, 24hr %, 1M %, 6M %, 1Y %
+4. Verify all stocks display data in each column
+5. Verify price is formatted with decimal places
+6. Verify percentages show + or - signs
+7. Verify positive returns shown in green, negative in red (if color coded)
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Stock listing displays all required fields with proper formatting
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -673,18 +672,18 @@
 **Test Case ID**: FR7-SYS-TC52
 **Test Case Description**: Verify sector filtering works correctly for single sector
 **Test Case Procedure**:
-1. Login as manager
-2. Create stocks in multiple sectors: Technology (2), Healthcare (1), Finance (1)
-3. Navigate to Stock Market page
-4. Verify all 4 stocks displayed
-5. Click "Filter by Sector" button
-6. Select only "Healthcare" checkbox
-7. Click "Apply Filter"
-8. Verify only Healthcare stock displayed (1 stock)
-9. Verify Technology and Finance stocks hidden
-10. Click "Clear Filter"
-11. Verify all 4 stocks displayed again
-**Expected Output**: Filter correctly shows only Healthcare stocks, clear filter restores all
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify stocks from multiple sectors are displayed
+4. Click "Filter by Sector" button
+5. Select only one sector (e.g., "Healthcare")
+6. Click "Apply Filter"
+7. Verify only stocks from selected sector are displayed
+8. Verify stocks from other sectors are hidden
+9. Click "Clear Filter"
+10. Verify all stocks are displayed again
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Filter correctly shows only selected sector stocks, clear filter restores all stocks
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -694,15 +693,16 @@
 **Test Case ID**: FR7-SYS-TC53
 **Test Case Description**: Verify multiple sectors can be filtered simultaneously
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create stocks: Technology (2), Healthcare (2), Finance (1), Energy (1)
-3. Navigate to Stock Market page
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify stocks from multiple sectors are displayed
 4. Click "Filter by Sector"
-5. Select "Technology" and "Finance"
-6. Apply filter
-7. Verify 3 stocks displayed (2 Technology + 1 Finance)
-8. Verify Healthcare and Energy stocks hidden
-**Expected Output**: Multiple sector selection shows stocks from all selected sectors
+5. Select multiple sectors (e.g., "Technology" and "Finance")
+6. Click "Apply Filter"
+7. Verify only stocks from selected sectors are displayed
+8. Verify stocks from other sectors are hidden
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Multiple sector selection shows stocks from all selected sectors only
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -710,17 +710,18 @@
 
 #### TC54: Stock Listing as Company (Read-Only Mode) (System Test)
 **Test Case ID**: FR7-SYS-TC54
-**Test Case Description**: Verify company users see stocks in read-only mode without CRUD buttons
+**Test Case Description**: Verify company users see stocks in read-only mode without management features
 **Test Case Procedure**:
-1. Login as company user
-2. Navigate to Stock Market page via header menu
-3. Verify stock listing displays with all data
-4. Verify NO checkboxes appear (read-only mode)
-5. Verify NO "Delete Selected" button visible
-6. Verify NO "Analysis" menu available
-7. Verify Filter by Sector works
-8. Attempt to select stock (should not be possible)
-**Expected Output**: Company users can view stocks but cannot modify or analyze
+1. Login as Company
+2. Navigate to Stock Market page
+3. Verify stock listing displays with all data (ticker, price, sector, returns)
+4. Verify NO checkboxes appear next to stocks
+5. Verify NO "Delete Selected" button is visible
+6. Verify NO "Analysis" menu is available
+7. Verify Filter by Sector functionality works
+8. Verify stocks are view-only (cannot modify or delete)
+**Test Data**: Company Username: company1, Company Password: pass456
+**Expected Output**: Company users can view stocks but cannot modify, delete, or analyze them
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
