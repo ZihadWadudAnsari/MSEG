@@ -307,17 +307,19 @@
 **Test Case ID**: FR4-INT-TC30
 **Test Case Description**: Verify documents attached to applications are stored and retrievable
 **Test Case Procedure**:
-1. Login as company user
-2. Create application and attach PDF file
-3. Submit application
-4. Verify file is copied to data/attachments/ directory
-5. Verify attachment record created in database with correct file_path
-6. Login as manager
-7. View application details
-8. Verify attachments are listed
-9. Click "Open" button to view attachment
-10. Verify file opens correctly
-**Expected Output**: Attachments stored in filesystem, tracked in database, and openable from manager view
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application and attach PDF file
+4. Submit application
+5. Logout and Login as Stock Manager
+6. Navigate to Manager Portal
+7. Select the application
+8. View application details
+9. Verify attachments are listed
+10. Click "Open" button to view attachment
+11. Verify file opens correctly
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Attachments are stored and viewable by manager from application details
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -440,13 +442,14 @@
 **Test Case ID**: FR5-INT-TC29
 **Test Case Description**: Verify system falls back to offline dataset when API unavailable
 **Test Case Procedure**:
-1. Disable network connection or remove API key
-2. Open InlineCompanySignup form
+1. Disable network connection or remove API key file
+2. On Login Portal, Select Company then Sign-Up Option
 3. Enter valid company name and number from offline dataset
 4. Submit registration
-5. Verify `verify_company_against_ch()` uses offline CSV/ZIP lookup
-6. Verify registration succeeds with offline validation
-**Expected Output**: System validates company using offline dataset when API fails
+5. Verify registration succeeds using offline validation
+6. Check that system shows message about using offline verification
+**Test Data**: Company from offline dataset (name and registration number)
+**Expected Output**: System validates company using offline dataset when API unavailable, registration succeeds
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -526,18 +529,19 @@
 
 #### TC31: Stock Deletion Cascade to Prices (Integration Test)
 **Test Case ID**: FR6-INT-TC31
-**Test Case Description**: Verify deleting stock also removes all price history
+**Test Case Description**: Verify deleting stock removes it completely from system
 **Test Case Procedure**:
-1. Login as manager
-2. Create stock from approved application (generates 366 price records)
-3. Query stock_price table to confirm prices exist
-4. Navigate to StockMarketPage
+1. Login as Stock Manager
+2. Approve an application to create a new stock with price history
+3. Navigate to Stock Market page
+4. Verify stock appears in listing with return percentages (24hr, 1M, 6M, 1Y)
 5. Select stock checkbox
 6. Click "Delete Selected" button
 7. Confirm deletion
-8. Query stock table to verify stock removed
-9. Query stock_price table to verify all associated prices removed via CASCADE
-**Expected Output**: Stock and all 366 price records deleted from database
+8. Verify stock no longer appears in stock listing
+9. Refresh page to confirm stock remains deleted
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Stock and all associated price history are completely removed from system
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -607,17 +611,17 @@
 **Test Case ID**: FR7-INT-TC32
 **Test Case Description**: Verify sector filter correctly filters displayed stocks
 **Test Case Procedure**:
-1. Login as manager
-2. Create stocks in multiple sectors (Technology, Healthcare, Finance)
-3. Navigate to StockMarketPage
-4. Verify all stocks displayed initially
-5. Click "Filter by Sector" button
-6. Select only "Technology" checkbox
-7. Click "Apply Filter"
-8. Verify only Technology sector stocks displayed in treeview
-9. Click "Clear Filter"
-10. Verify all stocks displayed again
-**Expected Output**: Filter shows only selected sectors, clear filter shows all stocks
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify all stocks from different sectors are displayed
+4. Click "Filter by Sector" button
+5. Select only "Technology" checkbox
+6. Click "Apply Filter"
+7. Verify only Technology sector stocks are displayed
+8. Click "Clear Filter"
+9. Verify all stocks are displayed again
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Filter shows only selected sector stocks, clear filter restores all stocks
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -627,14 +631,15 @@
 **Test Case ID**: FR7-INT-TC33
 **Test Case Description**: Verify multiple sectors can be selected simultaneously
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create stocks in Technology, Healthcare, Finance, Energy sectors
-3. Navigate to StockMarketPage
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify stocks from multiple sectors are displayed
 4. Click "Filter by Sector"
 5. Select "Technology" and "Healthcare" checkboxes
-6. Apply filter
-7. Verify only Technology and Healthcare stocks displayed
-8. Count stocks to ensure correct number shown
+6. Click "Apply Filter"
+7. Verify only Technology and Healthcare stocks are displayed
+8. Verify stocks from other sectors are hidden
+**Test Data**: Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Only stocks from selected sectors (Technology and Healthcare) are visible
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -786,15 +791,16 @@
 **Test Case ID**: FR8-INT-TC34
 **Test Case Description**: Verify multiple stocks can be selected via checkboxes
 **Test Case Procedure**:
-1. Login as manager
-2. Navigate to StockMarketPage
+1. Login as Stock Manager
+2. Navigate to Stock Market page
 3. Click checkboxes for 3 different stocks
-4. Verify stocks added to `self.selected_stocks` set
+4. Verify checkboxes show as selected
 5. Click "Select All" button
-6. Verify all stocks selected
+6. Verify all stock checkboxes are selected
 7. Click "Deselect All" button
-8. Verify all stocks deselected
-**Expected Output**: Checkbox interface correctly tracks selected stocks
+8. Verify all stock checkboxes are cleared
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Checkbox interface allows multiple stock selection for analysis
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -802,19 +808,20 @@
 
 #### TC35: Time-framed Returns Report Generation (Integration Test)
 **Test Case ID**: FR9-INT-TC35
-**Test Case Description**: Verify time-framed returns report displays correct data for selected stocks
+**Test Case Description**: Verify time-framed returns report displays data for selected stocks
 **Test Case Procedure**:
-1. Login as manager
-2. Create 3 test stocks with known price histories
-3. Select all 3 stocks via checkboxes
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select 3 stocks via checkboxes
 4. Click "Analysis" menu
 5. Click "Time-framed Returns"
 6. Verify report window opens
-7. Verify report shows 1M, 6M, 1Y returns for all 3 stocks
-8. Manually verify calculations are correct
+7. Verify report shows 1M, 6M, 1Y returns for all 3 selected stocks
+8. Verify percentages are displayed with + or - signs
 9. Click "Save as TXT" button
-10. Verify report exported to file
-**Expected Output**: Report displays correct returns for all selected stocks, exportable to TXT
+10. Verify report is saved to file
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Report displays returns for all selected stocks and can be exported to TXT
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -824,13 +831,14 @@
 **Test Case ID**: FR10-INT-TC36
 **Test Case Description**: Verify valuation comparison shows current values and growth
 **Test Case Procedure**:
-1. Login as manager
-2. Select multiple stocks
-3. Click Analysis → Valuation Comparison
-4. Verify report shows: ticker, current price, total valuation, shares, 1Y growth
-5. Manually verify: total_valuation = current_price × shares_outstanding
-6. Verify report is exportable
-**Expected Output**: Report shows accurate valuation calculations and growth percentages
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select multiple stocks via checkboxes
+4. Click Analysis → Valuation Comparison
+5. Verify report displays: ticker, current price, total valuation, shares, 1Y growth %
+6. Verify report is exportable to TXT file
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Report shows valuation data and growth percentages for selected stocks
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -840,15 +848,16 @@
 **Test Case ID**: FR11-INT-TC37
 **Test Case Description**: Verify sector benchmarking compares stock to sector average
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 5 stocks: 3 in Technology sector, 2 in Healthcare
-3. Navigate to StockMarketPage
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify multiple stocks from different sectors are available
+4. Select multiple stocks from Technology and Healthcare sectors
 5. Click Analysis → Sector Benchmarking
-6. Verify report calculates average 1Y return for Technology sector
-7. Verify report calculates average 1Y return for Healthcare sector
-8. Verify each stock shows difference from its sector average
-9. Manually verify calculations are correct
-**Expected Output**: Each stock compared to its own sector average, differences shown
+6. Verify report shows average 1Y return for each sector
+7. Verify each stock shows difference from its sector average
+8. Verify differences displayed with + or - signs
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Each stock is compared to its sector average, differences are shown
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -858,17 +867,15 @@
 **Test Case ID**: FR12-INT-TC38
 **Test Case Description**: Verify consistency score based on return variance
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 2 test stocks:
-   - Stock A: 1M=5%, 6M=5.5%, 1Y=6% (low variance)
-   - Stock B: 1M=20%, 6M=-10%, 1Y=5% (high variance)
-3. Navigate to StockMarketPage
-4. Select both stocks
-5. Click Analysis → Performance Consistency
-4. Verify Stock A has higher consistency score
-5. Verify score calculation: 100 - variance
-6. Manually calculate variance and verify
-**Expected Output**: Low variance stock has score near 100, high variance stock has lower score
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select multiple stocks via checkboxes
+4. Click Analysis → Performance Consistency
+5. Verify report displays consistency score for each stock
+6. Verify stocks with stable returns show higher scores
+7. Verify stocks with volatile returns show lower scores
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Stable stocks have higher consistency scores, volatile stocks have lower scores
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -878,17 +885,17 @@
 **Test Case ID**: FR12-INT-TC39
 **Test Case Description**: Verify market report analyzes entire market regardless of selection
 **Test Case Procedure**:
-1. Create stocks across multiple sectors
-2. Login as manager
-3. Navigate to StockMarketPage (do NOT select any stocks)
-4. Click Analysis → Generate Market Report
-5. Verify report shows:
+1. Login as Stock Manager
+2. Navigate to Stock Market page (do NOT select any stocks)
+3. Click Analysis → Generate Market Report
+4. Verify report displays:
    - Total companies listed
-   - Total market valuation (sum of all stocks)
+   - Total market valuation
    - Average valuation
    - Sector-wise distribution with percentages
-6. Manually verify calculations
-**Expected Output**: Report analyzes all stocks in database, not just selected ones
+5. Verify report can be exported to TXT file
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Report analyzes all stocks in system, not just selected ones
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
