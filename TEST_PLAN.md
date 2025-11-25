@@ -329,16 +329,15 @@
 **Test Case ID**: FR4-SYS-TC44
 **Test Case Description**: Verify system prevents duplicate ticker at submission time
 **Test Case Procedure**:
-1. Login as manager and create stock with ticker "DUPL"
-2. Logout and login as company
-3. Navigate to application form
-4. Fill form with ticker "DUPL"
-5. Attempt to submit
-6. Verify error message: "Ticker DUPL is already in use"
-7. Verify application is NOT submitted
-8. Change ticker to "UNIQ"
-9. Submit successfully
-**Expected Output**: Duplicate ticker rejected at form validation, unique ticker accepted
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application with ticker that already exists in stock market (e.g., "AAPL")
+4. Attempt to submit application
+5. Verify error message about duplicate ticker is displayed
+6. Change ticker to unique value
+7. Submit application successfully
+**Test Data**: Company Username: company1, Company Password: pass456; Duplicate Ticker: existing ticker; Unique Ticker: new ticker
+**Expected Output**: Duplicate ticker rejected with error message, unique ticker accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -348,16 +347,18 @@
 **Test Case ID**: FR4-SYS-TC45
 **Test Case Description**: Verify valuations outside 100M-500B range are rejected
 **Test Case Procedure**:
-1. Login as company
-2. Create application with valuation 50,000,000 (50M - too low)
-3. Attempt to submit
-4. Verify error: "Total valuation must be at least 100 million"
-5. Change valuation to 600,000,000,000 (600B - too high)
-6. Attempt to submit
-7. Verify error: "Total valuation must not exceed 500 billion"
-8. Change valuation to 250,000,000 (250M - valid)
-9. Submit successfully
-**Expected Output**: Out-of-range valuations rejected, valid valuation accepted
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application with valuation 50,000,000 (50M - too low)
+4. Attempt to submit
+5. Verify error message about minimum 100 million requirement
+6. Change valuation to 600,000,000,000 (600B - too high)
+7. Attempt to submit
+8. Verify error message about maximum 500 billion limit
+9. Change valuation to 250,000,000 (250M - valid)
+10. Submit successfully
+**Test Data**: Company Username: company1, Company Password: pass456; Invalid Valuations: 50000000, 600000000000; Valid Valuation: 250000000
+**Expected Output**: Out-of-range valuations rejected with error messages, valid valuation accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -459,15 +460,17 @@
 **Test Case ID**: FR5-SYS-TC46
 **Test Case Description**: Verify company registration validates incorporation date
 **Test Case Procedure**:
-1. Launch application
-2. Click "Sign Up" as company
-3. Fill all fields, set incorporation date to 2023-01-01 (less than 3 years ago)
-4. Attempt to submit
-5. Verify error: "Company must be incorporated at least 3 years ago"
-6. Change date to 2020-01-01 (valid)
-7. Submit successfully
-8. Verify company account created
-**Expected Output**: Recent incorporation date rejected, older date accepted
+1. Launch MSEG application
+2. On Login Portal, Select Company then Sign-Up Option
+3. Fill all registration fields
+4. Set incorporation date to recent date (less than 3 years ago, e.g., 2023-01-01)
+5. Attempt to submit registration
+6. Verify error message about minimum 3 years requirement
+7. Change date to valid date (at least 3 years ago, e.g., 2020-01-01)
+8. Submit registration successfully
+9. Verify company account is created
+**Test Data**: Company Name, Registration No, Username, Password; Invalid Date: 2023-01-01; Valid Date: 2020-01-01
+**Expected Output**: Recent incorporation date rejected with error, older date accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -477,15 +480,16 @@
 **Test Case ID**: FR5-SYS-TC47
 **Test Case Description**: Verify online Companies House API verification works
 **Test Case Procedure**:
-1. Ensure API key is configured in data/ch_api_key.txt
-2. Ensure internet connection available
-3. Launch application and click "Sign Up"
+1. Ensure internet connection is available
+2. Launch MSEG application
+3. On Login Portal, Select Company then Sign-Up Option
 4. Enter invalid company name "NonexistentCompanyXYZ123" and number "00000000"
 5. Attempt to submit registration
-6. Verify error: "Company not found in Companies House registry"
-7. Enter valid company: "TESCO PLC" and "00445790"
-8. Submit successfully
-**Expected Output**: Invalid company rejected by API, valid company accepted
+6. Verify error message stating company not found in Companies House registry
+7. Enter valid company name and registration number from Companies House
+8. Submit registration successfully
+**Test Data**: Invalid Company: "NonexistentCompanyXYZ123", "00000000"; Valid Company from Companies House registry
+**Expected Output**: Invalid company rejected with error, valid company accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -495,14 +499,15 @@
 **Test Case ID**: FR5-SYS-TC48
 **Test Case Description**: Verify offline dataset validation when API unavailable
 **Test Case Procedure**:
-1. Remove API key file or disable internet
-2. Ensure offline dataset exists in data/companies_house_offline/
-3. Launch application and click "Sign Up"
-4. Enter company name and number from offline dataset
+1. Disable internet connection
+2. Launch MSEG application
+3. On Login Portal, Select Company then Sign-Up Option
+4. Enter company name and registration number from offline dataset
 5. Submit registration
-6. Verify system uses offline validation (check console output)
+6. Verify system displays message about using offline verification
 7. Verify registration succeeds
-**Expected Output**: System falls back to offline dataset when API unavailable
+**Test Data**: Company name and number from offline dataset
+**Expected Output**: System uses offline validation when API unavailable, registration succeeds
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1021,15 +1026,18 @@
 
 #### TC40: Password Hashing on Storage (Integration Test)
 **Test Case ID**: NR1-INT-TC40
-**Test Case Description**: Verify passwords are hashed before storage
+**Test Case Description**: Verify passwords are hashed and not stored in plain text
 **Test Case Procedure**:
-1. Register new company user with password "TestPass123"
-2. Open data/users.txt file
-3. Verify password is NOT stored in plain text
-4. Verify password is SHA256 hashed (64-character hex string)
-5. Attempt login with "TestPass123"
-6. Verify login succeeds (hash verification works)
-**Expected Output**: Passwords stored as SHA256 hash, not plain text
+1. On Login Portal, Select Company then Sign-Up Option
+2. Register new company user with password "TestPass123"
+3. Complete registration
+4. Login with the registered username and password "TestPass123"
+5. Verify login succeeds
+6. Logout
+7. Attempt login with incorrect password
+8. Verify login fails with error message
+**Test Data**: New Company Username, Password: TestPass123
+**Expected Output**: Login succeeds with correct password, fails with incorrect password (password is securely stored)
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1139,15 +1147,17 @@
 
 #### TC41: Database Initialization on Startup (Integration Test)
 **Test Case ID**: NR3-INT-TC41
-**Test Case Description**: Verify database and tables are created if missing
+**Test Case Description**: Verify system initializes properly on first launch
 **Test Case Procedure**:
-1. Delete data/mseg.db file if exists
-2. Run main.py
-3. Verify db.initialize_db() creates new database
-4. Verify all tables created: sector, company, application, stock, stock_price, attachment
-5. Verify 10 sectors are pre-populated
-6. Verify foreign key enforcement is enabled
-**Expected Output**: Database and all tables created automatically on first run
+1. Launch MSEG application for the first time
+2. Verify application opens successfully
+3. Verify login page is displayed
+4. Attempt to login as Stock Manager (manager1/pass123)
+5. Verify login succeeds
+6. Navigate to Stock Market page
+7. Verify all sectors are available in sector dropdown/filter
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Application initializes successfully with all required data available
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
