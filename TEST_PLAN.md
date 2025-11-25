@@ -3,11 +3,11 @@
 
 ---
 
-## UNIT TESTING
+## FUNCTIONAL REQUIREMENTS TESTING
 
 ### FR1: View Queue of Pending Applications
 
-#### TC1: Retrieve All Pending Applications
+#### TC1: Retrieve All Pending Applications (Unit Test)
 **Test Case ID**: FR1-TC1
 **Test Case Description**: Verify that the system retrieves all pending applications from database
 **Test Case Procedure**:
@@ -21,351 +21,7 @@
 
 ---
 
-### FR2: Approve Valid Application
-
-#### TC2: Application Approval Status Update
-**Test Case ID**: FR2-TC2
-**Test Case Description**: Verify application status changes to 'approved' in database
-**Test Case Procedure**:
-1. Import db module
-2. Insert test application with status='pending'
-3. Call `application_set_approved(application_id)`
-4. Query application table to verify status='approved'
-**Expected Output**: Application status in database is updated to 'approved'
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC3: Stock Creation from Approved Application
-**Test Case ID**: FR2-TC3
-**Test Case Description**: Verify stock is created when application is approved
-**Test Case Procedure**:
-1. Import db module
-2. Insert test application with valid data
-3. Call `stock_create_from_application(app_id)`
-4. Query stock table to verify new stock exists
-5. Verify stock ticker matches application ticker
-**Expected Output**: New stock record created with ticker, shares, and valuation from application
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC4: Stock Price History Generation
-**Test Case ID**: FR2-TC4
-**Test Case Description**: Verify 366 days of price history is generated for new stock
-**Test Case Procedure**:
-1. Import db module
-2. Create stock using `stock_create_from_application()`
-3. Call `stock_get_prices(stock_id)`
-4. Count number of price records returned
-5. Verify prices show realistic daily variation (±1.5%)
-**Expected Output**: 366 price records created with random walk pricing model
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR3: Reject Application with Reasons
-
-#### TC5: Application Rejection Status Update
-**Test Case ID**: FR3-TC5
-**Test Case Description**: Verify application status changes to 'rejected' with notes
-**Test Case Procedure**:
-1. Import db module
-2. Insert test application with status='pending'
-3. Call `application_set_rejected(app_id, "Test rejection reason")`
-4. Query application to verify status='rejected' and internal_notes field contains reason
-**Expected Output**: Application status='rejected' and internal_notes contains rejection reason
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR4: Integrity Check (Missing Fields, Duplicates, Unrealistic Valuations)
-
-#### TC6: Ticker Format Validation
-**Test Case ID**: FR4-TC6
-**Test Case Description**: Verify ticker must be 3-4 capital letters only
-**Test Case Procedure**:
-1. Open ApplicationFormPage in test mode
-2. Test invalid tickers: "AB" (too short), "ABCDE" (too long), "ab12" (lowercase/numbers)
-3. Verify validation function rejects these inputs
-4. Test valid ticker "MSFT"
-**Expected Output**: Invalid tickers rejected, valid ticker accepted
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC7: Duplicate Ticker Prevention
-**Test Case ID**: FR4-TC7
-**Test Case Description**: Verify system prevents duplicate ticker symbols
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with ticker "TEST"
-3. Attempt to create application with same ticker "TEST"
-4. Verify validation check in ApplicationFormPage.submit() detects duplicate (lines 472-476)
-**Expected Output**: Error message "Ticker TEST is already in use" displayed
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC8: Valuation Lower Bound Check
-**Test Case ID**: FR4-TC8
-**Test Case Description**: Verify valuation must be at least 100 million
-**Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Enter valuation of 50,000,000 (50 million)
-3. Attempt to submit application
-4. Verify validation check at lines 501-504 in pages.py rejects submission
-**Expected Output**: Error message "Total valuation must be at least 100 million"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC9: Valuation Upper Bound Check
-**Test Case ID**: FR4-TC9
-**Test Case Description**: Verify valuation cannot exceed 500 billion
-**Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Enter valuation of 600,000,000,000 (600 billion)
-3. Attempt to submit application
-4. Verify validation check at lines 497-499 rejects submission
-**Expected Output**: Error message "Total valuation must not exceed 500 billion"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC10: Missing Required Fields
-**Test Case ID**: FR4-TC10
-**Test Case Description**: Verify all required fields must be filled
-**Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Leave one or more fields empty (e.g., company name)
-3. Attempt to submit application
-4. Verify validation check at lines 455-464 prevents submission
-**Expected Output**: Error message "All fields must be filled" displayed
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC11: Attachment Requirement
-**Test Case ID**: FR4-TC11
-**Test Case Description**: Verify at least one attachment is required
-**Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Fill all fields but do not attach any documents
-3. Attempt to submit application
-4. Verify validation check at lines 507-509 prevents submission
-**Expected Output**: Error message "At least one attachment is required" displayed
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR5: Regulatory Compliance Review
-
-#### TC12: Company Incorporation Date Validation
-**Test Case ID**: FR5-TC12
-**Test Case Description**: Verify company must be incorporated for at least 3 years
-**Test Case Procedure**:
-1. Open InlineCompanySignup form
-2. Enter incorporation date less than 3 years ago (e.g., 2023-01-01 if today is 2025-11-24)
-3. Attempt to submit registration
-4. Verify validation at lines 108-114 in pages.py rejects submission
-**Expected Output**: Error message "Company must be incorporated at least 3 years ago"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC13: Company Registration Number Uniqueness
-**Test Case ID**: FR5-TC13
-**Test Case Description**: Verify duplicate registration numbers are prevented
-**Test Case Procedure**:
-1. Import db module
-2. Insert company with registration number "12345678"
-3. Attempt to insert another company with same registration number
-4. Verify UNIQUE constraint on company.registration_number prevents duplicate
-**Expected Output**: Database error "UNIQUE constraint failed" raised
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC14: Companies House API Verification
-**Test Case ID**: FR5-TC14
-**Test Case Description**: Verify system checks company exists in Companies House registry
-**Test Case Procedure**:
-1. Import companies_house module
-2. Call `verify_company_against_ch("InvalidCompanyName", "00000000")`
-3. Verify function returns False for invalid company
-4. Test with valid company (e.g., "TESCO", "00445790")
-**Expected Output**: Invalid company returns False, valid company returns True
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC15: Incorporation Date Format Validation
-**Test Case ID**: FR5-TC15
-**Test Case Description**: Verify incorporation date must be in YYYY-MM-DD format
-**Test Case Procedure**:
-1. Open InlineCompanySignup
-2. Enter invalid date formats: "01/01/2020", "2020-1-1", "20-01-2020"
-3. Verify validation at line 91 in pages.py rejects these
-4. Enter valid format "2020-01-01"
-**Expected Output**: Invalid formats rejected with error "Date must be YYYY-MM-DD", valid format accepted
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC16: Incorporation Date Range Validation
-**Test Case ID**: FR5-TC16
-**Test Case Description**: Verify incorporation date must be between 1850 and today
-**Test Case Procedure**:
-1. Open InlineCompanySignup
-2. Test date "1800-01-01" (too old)
-3. Test future date "2026-12-31"
-4. Verify validation at lines 96-106 rejects both
-**Expected Output**: Error message "Date must be between 1850 and today's date"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR6: Remove Stock Listing
-
-#### TC17: Stock Deletion Function
-**Test Case ID**: FR6-TC17
-**Test Case Description**: Verify stock can be deleted from database
-**Test Case Procedure**:
-1. Import db module
-2. Create test stock with `stock_create_from_application()`
-3. Call `stock_delete(stock_id)`
-4. Query stock table to verify stock no longer exists
-5. Verify CASCADE delete removed associated price history
-**Expected Output**: Stock record deleted along with all price history records
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR7: View All Active Stock Listings
-
-#### TC18: Retrieve All Stocks
-**Test Case ID**: FR7-TC18
-**Test Case Description**: Verify system retrieves all stocks with prices and sectors
-**Test Case Procedure**:
-1. Import db module
-2. Create multiple test stocks in different sectors
-3. Call `stocks_all()`
-4. Verify returned list includes stock_id, ticker, current_price, and sector_name
-**Expected Output**: List of all stocks with id, ticker, price, and sector information
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR8-FR12: Stock Analysis Functions
-
-#### TC19: Time-framed Returns Calculation (1 Month)
-**Test Case ID**: FR8-TC19
-**Test Case Description**: Verify 1-month return calculation is accurate
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=1)`
-4. Manually calculate expected return: ((price_now - price_30days_ago) / price_30days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC20: Time-framed Returns Calculation (6 Months)
-**Test Case ID**: FR8-TC20
-**Test Case Description**: Verify 6-month return calculation is accurate
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=6)`
-4. Manually calculate expected return: ((price_now - price_180days_ago) / price_180days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC21: Time-framed Returns Calculation (1 Year)
-**Test Case ID**: FR8-TC21
-**Test Case Description**: Verify 1-year return calculation is accurate
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=12)`
-4. Manually calculate expected return: ((price_now - price_365days_ago) / price_365days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC22: 24-Hour Change Calculation
-**Test Case ID**: FR8-TC22
-**Test Case Description**: Verify 24-hour price change calculation
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with known prices for today and yesterday
-3. Call `stock_calculate_24hr_change(stock_id)`
-4. Manually calculate: ((today_price - yesterday_price) / yesterday_price) * 100
-5. Compare results
-**Expected Output**: 24hr change percentage matches manual calculation
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### NR2: Data Integrity Validation
-
-#### TC23: Positive Shares Validation
-**Test Case ID**: NR2-TC23
-**Test Case Description**: Verify shares outstanding must be positive
-**Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock with shares_outstanding = 0 or negative value
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC24: Positive Valuation Validation
-**Test Case ID**: NR2-TC24
-**Test Case Description**: Verify total valuation must be positive
-**Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock with total_valuation = 0 or negative value
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC25: Positive Price Validation
-**Test Case ID**: NR2-TC25
-**Test Case Description**: Verify stock prices must be positive
-**Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock_price record with price <= 0
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### NR7: Reliability - Deterministic Calculations
-
-#### TC26: Return Calculation Consistency
-**Test Case ID**: NR7-TC26
-**Test Case Description**: Verify return calculations are repeatable with same input
-**Test Case Procedure**:
-1. Import db module
-2. Create stock with fixed price history
-3. Call `stock_calculate_return(stock_id, months=6)` ten times
-4. Verify all results are identical
-**Expected Output**: All ten calculations return exact same percentage
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-## INTEGRATION TESTING
-
-### FR1-FR3: Application Workflow Integration
-
-#### TC27: End-to-End Application Submission and Approval
+#### TC27: End-to-End Application Submission and Approval (Integration Test)
 **Test Case ID**: FR1-FR2-INT-TC27
 **Test Case Description**: Verify complete workflow from submission to approval with database persistence
 **Test Case Procedure**:
@@ -385,272 +41,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC28: End-to-End Application Submission and Rejection
-**Test Case ID**: FR1-FR3-INT-TC28
-**Test Case Description**: Verify complete workflow from submission to rejection with notes
-**Test Case Procedure**:
-1. Login as company user
-2. Submit application with all required data
-3. Verify application stored in database
-4. Login as manager user
-5. Open ManagerPortalPage and view application in pending list
-6. Click "Reject" button
-7. Enter rejection notes in text box
-8. Save rejection
-9. Verify application appears in rejected list
-10. Verify internal_notes in database contains rejection reason
-11. Login as company user
-12. Verify application shows in "My Applications" with rejected status
-**Expected Output**: Application successfully rejected with notes visible to both manager and company
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
 ---
 
-### FR4-FR5: Validation and Compliance Integration
-
-#### TC29: Companies House Integration with Offline Fallback
-**Test Case ID**: FR5-INT-TC29
-**Test Case Description**: Verify system falls back to offline dataset when API unavailable
-**Test Case Procedure**:
-1. Disable network connection or remove API key
-2. Open InlineCompanySignup form
-3. Enter valid company name and number from offline dataset
-4. Submit registration
-5. Verify `verify_company_against_ch()` uses offline CSV/ZIP lookup
-6. Verify registration succeeds with offline validation
-**Expected Output**: System validates company using offline dataset when API fails
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC30: Attachment Storage and Retrieval
-**Test Case ID**: FR4-INT-TC30
-**Test Case Description**: Verify documents attached to applications are stored and retrievable
-**Test Case Procedure**:
-1. Login as company user
-2. Create application and attach PDF file
-3. Submit application
-4. Verify file is copied to data/attachments/ directory
-5. Verify attachment record created in database with correct file_path
-6. Login as manager
-7. View application details
-8. Verify attachments are listed
-9. Click "Open" button to view attachment
-10. Verify file opens correctly
-**Expected Output**: Attachments stored in filesystem, tracked in database, and openable from manager view
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR6: Stock Deletion Integration
-
-#### TC31: Stock Deletion Cascade to Prices
-**Test Case ID**: FR6-INT-TC31
-**Test Case Description**: Verify deleting stock also removes all price history
-**Test Case Procedure**:
-1. Login as manager
-2. Create stock from approved application (generates 366 price records)
-3. Query stock_price table to confirm prices exist
-4. Navigate to StockMarketPage
-5. Select stock checkbox
-6. Click "Delete Selected" button
-7. Confirm deletion
-8. Query stock table to verify stock removed
-9. Query stock_price table to verify all associated prices removed via CASCADE
-**Expected Output**: Stock and all 366 price records deleted from database
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR7: Stock Listing with Filtering
-
-#### TC32: Sector Filter Application
-**Test Case ID**: FR7-INT-TC32
-**Test Case Description**: Verify sector filter correctly filters displayed stocks
-**Test Case Procedure**:
-1. Login as manager
-2. Create stocks in multiple sectors (Technology, Healthcare, Finance)
-3. Navigate to StockMarketPage
-4. Verify all stocks displayed initially
-5. Click "Filter by Sector" button
-6. Select only "Technology" checkbox
-7. Click "Apply Filter"
-8. Verify only Technology sector stocks displayed in treeview
-9. Click "Clear Filter"
-10. Verify all stocks displayed again
-**Expected Output**: Filter shows only selected sectors, clear filter shows all stocks
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC33: Multi-Sector Filter
-**Test Case ID**: FR7-INT-TC33
-**Test Case Description**: Verify multiple sectors can be selected simultaneously
-**Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create stocks in Technology, Healthcare, Finance, Energy sectors
-3. Navigate to StockMarketPage
-4. Click "Filter by Sector"
-5. Select "Technology" and "Healthcare" checkboxes
-6. Apply filter
-7. Verify only Technology and Healthcare stocks displayed
-8. Count stocks to ensure correct number shown
-**Expected Output**: Only stocks from selected sectors (Technology and Healthcare) are visible
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR8: Multi-Stock Selection for Analysis
-
-#### TC34: Select Multiple Stocks for Analysis
-**Test Case ID**: FR8-INT-TC34
-**Test Case Description**: Verify multiple stocks can be selected via checkboxes
-**Test Case Procedure**:
-1. Login as manager
-2. Navigate to StockMarketPage
-3. Click checkboxes for 3 different stocks
-4. Verify stocks added to `self.selected_stocks` set
-5. Click "Select All" button
-6. Verify all stocks selected
-7. Click "Deselect All" button
-8. Verify all stocks deselected
-**Expected Output**: Checkbox interface correctly tracks selected stocks
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### FR9-FR12: Analysis Report Generation
-
-#### TC35: Time-framed Returns Report Generation
-**Test Case ID**: FR9-INT-TC35
-**Test Case Description**: Verify time-framed returns report displays correct data for selected stocks
-**Test Case Procedure**:
-1. Login as manager
-2. Create 3 test stocks with known price histories
-3. Select all 3 stocks via checkboxes
-4. Click "Analysis" menu
-5. Click "Time-framed Returns"
-6. Verify report window opens
-7. Verify report shows 1M, 6M, 1Y returns for all 3 stocks
-8. Manually verify calculations are correct
-9. Click "Save as TXT" button
-10. Verify report exported to file
-**Expected Output**: Report displays correct returns for all selected stocks, exportable to TXT
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC36: Valuation Comparison Report
-**Test Case ID**: FR10-INT-TC36
-**Test Case Description**: Verify valuation comparison shows current values and growth
-**Test Case Procedure**:
-1. Login as manager
-2. Select multiple stocks
-3. Click Analysis → Valuation Comparison
-4. Verify report shows: ticker, current price, total valuation, shares, 1Y growth
-5. Manually verify: total_valuation = current_price × shares_outstanding
-6. Verify report is exportable
-**Expected Output**: Report shows accurate valuation calculations and growth percentages
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC37: Sector Benchmarking Report
-**Test Case ID**: FR11-INT-TC37
-**Test Case Description**: Verify sector benchmarking compares stock to sector average
-**Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 5 stocks: 3 in Technology sector, 2 in Healthcare
-3. Navigate to StockMarketPage
-5. Click Analysis → Sector Benchmarking
-6. Verify report calculates average 1Y return for Technology sector
-7. Verify report calculates average 1Y return for Healthcare sector
-8. Verify each stock shows difference from its sector average
-9. Manually verify calculations are correct
-**Expected Output**: Each stock compared to its own sector average, differences shown
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC38: Performance Consistency Score Calculation
-**Test Case ID**: FR12-INT-TC38
-**Test Case Description**: Verify consistency score based on return variance
-**Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 2 test stocks:
-   - Stock A: 1M=5%, 6M=5.5%, 1Y=6% (low variance)
-   - Stock B: 1M=20%, 6M=-10%, 1Y=5% (high variance)
-3. Navigate to StockMarketPage
-4. Select both stocks
-5. Click Analysis → Performance Consistency
-4. Verify Stock A has higher consistency score
-5. Verify score calculation: 100 - variance
-6. Manually calculate variance and verify
-**Expected Output**: Low variance stock has score near 100, high variance stock has lower score
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
-#### TC39: Market Report Generation (No Selection Required)
-**Test Case ID**: FR12-INT-TC39
-**Test Case Description**: Verify market report analyzes entire market regardless of selection
-**Test Case Procedure**:
-1. Create stocks across multiple sectors
-2. Login as manager
-3. Navigate to StockMarketPage (do NOT select any stocks)
-4. Click Analysis → Generate Market Report
-5. Verify report shows:
-   - Total companies listed
-   - Total market valuation (sum of all stocks)
-   - Average valuation
-   - Sector-wise distribution with percentages
-6. Manually verify calculations
-**Expected Output**: Report analyzes all stocks in database, not just selected ones
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### NR1: Privacy - Data Handling
-
-#### TC40: Password Hashing on Storage
-**Test Case ID**: NR1-INT-TC40
-**Test Case Description**: Verify passwords are hashed before storage
-**Test Case Procedure**:
-1. Register new company user with password "TestPass123"
-2. Open data/users.txt file
-3. Verify password is NOT stored in plain text
-4. Verify password is SHA256 hashed (64-character hex string)
-5. Attempt login with "TestPass123"
-6. Verify login succeeds (hash verification works)
-**Expected Output**: Passwords stored as SHA256 hash, not plain text
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-### NR3: Availability - Database Connection
-
-#### TC41: Database Initialization on Startup
-**Test Case ID**: NR3-INT-TC41
-**Test Case Description**: Verify database and tables are created if missing
-**Test Case Procedure**:
-1. Delete data/mseg.db file if exists
-2. Run main.py
-3. Verify db.initialize_db() creates new database
-4. Verify all tables created: sector, company, application, stock, stock_price, attachment
-5. Verify 10 sectors are pre-populated
-6. Verify foreign key enforcement is enabled
-**Expected Output**: Database and all tables created automatically on first run
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
-
----
-
-## SYSTEM TESTING
-
-### FR1-FR3: Complete Application Review Workflow
-
-#### TC42: Company Submits Application - Manager Approves - Stock Appears
+#### TC42: Company Submits Application - Manager Approves - Stock Appears (System Test)
 **Test Case ID**: FR1-FR2-SYS-TC42
 **Test Case Description**: End-to-end system test of successful application flow
 **Test Case Procedure**:
@@ -690,7 +83,93 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC43: Company Submits Application - Manager Rejects - No Stock Created
+---
+
+### FR2: Approve Valid Application
+
+#### TC2: Application Approval Status Update (Unit Test)
+**Test Case ID**: FR2-TC2
+**Test Case Description**: Verify application status changes to 'approved' in database
+**Test Case Procedure**:
+1. Import db module
+2. Insert test application with status='pending'
+3. Call `application_set_approved(application_id)`
+4. Query application table to verify status='approved'
+**Expected Output**: Application status in database is updated to 'approved'
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC3: Stock Creation from Approved Application (Unit Test)
+**Test Case ID**: FR2-TC3
+**Test Case Description**: Verify stock is created when application is approved
+**Test Case Procedure**:
+1. Import db module
+2. Insert test application with valid data
+3. Call `stock_create_from_application(app_id)`
+4. Query stock table to verify new stock exists
+5. Verify stock ticker matches application ticker
+**Expected Output**: New stock record created with ticker, shares, and valuation from application
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC4: Stock Price History Generation (Unit Test)
+**Test Case ID**: FR2-TC4
+**Test Case Description**: Verify 366 days of price history is generated for new stock
+**Test Case Procedure**:
+1. Import db module
+2. Create stock using `stock_create_from_application()`
+3. Call `stock_get_prices(stock_id)`
+4. Count number of price records returned
+5. Verify prices show realistic daily variation (±1.5%)
+**Expected Output**: 366 price records created with random walk pricing model
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+### FR3: Reject Application with Reasons
+
+#### TC5: Application Rejection Status Update (Unit Test)
+**Test Case ID**: FR3-TC5
+**Test Case Description**: Verify application status changes to 'rejected' with notes
+**Test Case Procedure**:
+1. Import db module
+2. Insert test application with status='pending'
+3. Call `application_set_rejected(app_id, "Test rejection reason")`
+4. Query application to verify status='rejected' and internal_notes field contains reason
+**Expected Output**: Application status='rejected' and internal_notes contains rejection reason
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC28: End-to-End Application Submission and Rejection (Integration Test)
+**Test Case ID**: FR1-FR3-INT-TC28
+**Test Case Description**: Verify complete workflow from submission to rejection with notes
+**Test Case Procedure**:
+1. Login as company user
+2. Submit application with all required data
+3. Verify application stored in database
+4. Login as manager user
+5. Open ManagerPortalPage and view application in pending list
+6. Click "Reject" button
+7. Enter rejection notes in text box
+8. Save rejection
+9. Verify application appears in rejected list
+10. Verify internal_notes in database contains rejection reason
+11. Login as company user
+12. Verify application shows in "My Applications" with rejected status
+**Expected Output**: Application successfully rejected with notes visible to both manager and company
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC43: Company Submits Application - Manager Rejects - No Stock Created (System Test)
 **Test Case ID**: FR1-FR3-SYS-TC43
 **Test Case Description**: End-to-end system test of application rejection flow
 **Test Case Procedure**:
@@ -716,9 +195,113 @@
 
 ---
 
-### FR4-FR5: Validation and Compliance System Tests
+### FR4: Integrity Check (Missing Fields, Duplicates, Unrealistic Valuations)
 
-#### TC44: Duplicate Ticker Submission Blocked
+#### TC6: Ticker Format Validation (Unit Test)
+**Test Case ID**: FR4-TC6
+**Test Case Description**: Verify ticker must be 3-4 capital letters only
+**Test Case Procedure**:
+1. Open ApplicationFormPage in test mode
+2. Test invalid tickers: "AB" (too short), "ABCDE" (too long), "ab12" (lowercase/numbers)
+3. Verify validation function rejects these inputs
+4. Test valid ticker "MSFT"
+**Expected Output**: Invalid tickers rejected, valid ticker accepted
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC7: Duplicate Ticker Prevention (Unit Test)
+**Test Case ID**: FR4-TC7
+**Test Case Description**: Verify system prevents duplicate ticker symbols
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with ticker "TEST"
+3. Attempt to create application with same ticker "TEST"
+4. Verify validation check in ApplicationFormPage.submit() detects duplicate (lines 472-476)
+**Expected Output**: Error message "Ticker TEST is already in use" displayed
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC8: Valuation Lower Bound Check (Unit Test)
+**Test Case ID**: FR4-TC8
+**Test Case Description**: Verify valuation must be at least 100 million
+**Test Case Procedure**:
+1. Open ApplicationFormPage
+2. Enter valuation of 50,000,000 (50 million)
+3. Attempt to submit application
+4. Verify validation check at lines 501-504 in pages.py rejects submission
+**Expected Output**: Error message "Total valuation must be at least 100 million"
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC9: Valuation Upper Bound Check (Unit Test)
+**Test Case ID**: FR4-TC9
+**Test Case Description**: Verify valuation cannot exceed 500 billion
+**Test Case Procedure**:
+1. Open ApplicationFormPage
+2. Enter valuation of 600,000,000,000 (600 billion)
+3. Attempt to submit application
+4. Verify validation check at lines 497-499 rejects submission
+**Expected Output**: Error message "Total valuation must not exceed 500 billion"
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC10: Missing Required Fields (Unit Test)
+**Test Case ID**: FR4-TC10
+**Test Case Description**: Verify all required fields must be filled
+**Test Case Procedure**:
+1. Open ApplicationFormPage
+2. Leave one or more fields empty (e.g., company name)
+3. Attempt to submit application
+4. Verify validation check at lines 455-464 prevents submission
+**Expected Output**: Error message "All fields must be filled" displayed
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC11: Attachment Requirement (Unit Test)
+**Test Case ID**: FR4-TC11
+**Test Case Description**: Verify at least one attachment is required
+**Test Case Procedure**:
+1. Open ApplicationFormPage
+2. Fill all fields but do not attach any documents
+3. Attempt to submit application
+4. Verify validation check at lines 507-509 prevents submission
+**Expected Output**: Error message "At least one attachment is required" displayed
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC30: Attachment Storage and Retrieval (Integration Test)
+**Test Case ID**: FR4-INT-TC30
+**Test Case Description**: Verify documents attached to applications are stored and retrievable
+**Test Case Procedure**:
+1. Login as company user
+2. Create application and attach PDF file
+3. Submit application
+4. Verify file is copied to data/attachments/ directory
+5. Verify attachment record created in database with correct file_path
+6. Login as manager
+7. View application details
+8. Verify attachments are listed
+9. Click "Open" button to view attachment
+10. Verify file opens correctly
+**Expected Output**: Attachments stored in filesystem, tracked in database, and openable from manager view
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC44: Duplicate Ticker Submission Blocked (System Test)
 **Test Case ID**: FR4-SYS-TC44
 **Test Case Description**: Verify system prevents duplicate ticker at submission time
 **Test Case Procedure**:
@@ -735,7 +318,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC45: Unrealistic Valuation Blocked
+---
+
+#### TC45: Unrealistic Valuation Blocked (System Test)
 **Test Case ID**: FR4-SYS-TC45
 **Test Case Description**: Verify valuations outside 100M-500B range are rejected
 **Test Case Procedure**:
@@ -752,7 +337,97 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC46: Company Registration with Invalid Incorporation Date
+---
+
+### FR5: Regulatory Compliance Review
+
+#### TC12: Company Incorporation Date Validation (Unit Test)
+**Test Case ID**: FR5-TC12
+**Test Case Description**: Verify company must be incorporated for at least 3 years
+**Test Case Procedure**:
+1. Open InlineCompanySignup form
+2. Enter incorporation date less than 3 years ago (e.g., 2023-01-01 if today is 2025-11-24)
+3. Attempt to submit registration
+4. Verify validation at lines 108-114 in pages.py rejects submission
+**Expected Output**: Error message "Company must be incorporated at least 3 years ago"
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC13: Company Registration Number Uniqueness (Unit Test)
+**Test Case ID**: FR5-TC13
+**Test Case Description**: Verify duplicate registration numbers are prevented
+**Test Case Procedure**:
+1. Import db module
+2. Insert company with registration number "12345678"
+3. Attempt to insert another company with same registration number
+4. Verify UNIQUE constraint on company.registration_number prevents duplicate
+**Expected Output**: Database error "UNIQUE constraint failed" raised
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC14: Companies House API Verification (Unit Test)
+**Test Case ID**: FR5-TC14
+**Test Case Description**: Verify system checks company exists in Companies House registry
+**Test Case Procedure**:
+1. Import companies_house module
+2. Call `verify_company_against_ch("InvalidCompanyName", "00000000")`
+3. Verify function returns False for invalid company
+4. Test with valid company (e.g., "TESCO", "00445790")
+**Expected Output**: Invalid company returns False, valid company returns True
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC15: Incorporation Date Format Validation (Unit Test)
+**Test Case ID**: FR5-TC15
+**Test Case Description**: Verify incorporation date must be in YYYY-MM-DD format
+**Test Case Procedure**:
+1. Open InlineCompanySignup
+2. Enter invalid date formats: "01/01/2020", "2020-1-1", "20-01-2020"
+3. Verify validation at line 91 in pages.py rejects these
+4. Enter valid format "2020-01-01"
+**Expected Output**: Invalid formats rejected with error "Date must be YYYY-MM-DD", valid format accepted
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC16: Incorporation Date Range Validation (Unit Test)
+**Test Case ID**: FR5-TC16
+**Test Case Description**: Verify incorporation date must be between 1850 and today
+**Test Case Procedure**:
+1. Open InlineCompanySignup
+2. Test date "1800-01-01" (too old)
+3. Test future date "2026-12-31"
+4. Verify validation at lines 96-106 rejects both
+**Expected Output**: Error message "Date must be between 1850 and today's date"
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC29: Companies House Integration with Offline Fallback (Integration Test)
+**Test Case ID**: FR5-INT-TC29
+**Test Case Description**: Verify system falls back to offline dataset when API unavailable
+**Test Case Procedure**:
+1. Disable network connection or remove API key
+2. Open InlineCompanySignup form
+3. Enter valid company name and number from offline dataset
+4. Submit registration
+5. Verify `verify_company_against_ch()` uses offline CSV/ZIP lookup
+6. Verify registration succeeds with offline validation
+**Expected Output**: System validates company using offline dataset when API fails
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC46: Company Registration with Invalid Incorporation Date (System Test)
 **Test Case ID**: FR5-SYS-TC46
 **Test Case Description**: Verify company registration validates incorporation date
 **Test Case Procedure**:
@@ -768,7 +443,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC47: Companies House Verification (Online API)
+---
+
+#### TC47: Companies House Verification (Online API) (System Test)
 **Test Case ID**: FR5-SYS-TC47
 **Test Case Description**: Verify online Companies House API verification works
 **Test Case Procedure**:
@@ -784,7 +461,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC48: Companies House Verification (Offline Fallback)
+---
+
+#### TC48: Companies House Verification (Offline Fallback) (System Test)
 **Test Case ID**: FR5-SYS-TC48
 **Test Case Description**: Verify offline dataset validation when API unavailable
 **Test Case Procedure**:
@@ -801,9 +480,43 @@
 
 ---
 
-### FR6: Stock Management System Tests
+### FR6: Remove Stock Listing
 
-#### TC49: Delete Stock with Confirmation
+#### TC17: Stock Deletion Function (Unit Test)
+**Test Case ID**: FR6-TC17
+**Test Case Description**: Verify stock can be deleted from database
+**Test Case Procedure**:
+1. Import db module
+2. Create test stock with `stock_create_from_application()`
+3. Call `stock_delete(stock_id)`
+4. Query stock table to verify stock no longer exists
+5. Verify CASCADE delete removed associated price history
+**Expected Output**: Stock record deleted along with all price history records
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC31: Stock Deletion Cascade to Prices (Integration Test)
+**Test Case ID**: FR6-INT-TC31
+**Test Case Description**: Verify deleting stock also removes all price history
+**Test Case Procedure**:
+1. Login as manager
+2. Create stock from approved application (generates 366 price records)
+3. Query stock_price table to confirm prices exist
+4. Navigate to StockMarketPage
+5. Select stock checkbox
+6. Click "Delete Selected" button
+7. Confirm deletion
+8. Query stock table to verify stock removed
+9. Query stock_price table to verify all associated prices removed via CASCADE
+**Expected Output**: Stock and all 366 price records deleted from database
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC49: Delete Stock with Confirmation (System Test)
 **Test Case ID**: FR6-SYS-TC49
 **Test Case Description**: Verify stock deletion requires confirmation and removes stock
 **Test Case Procedure**:
@@ -826,7 +539,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC50: Delete Multiple Stocks Simultaneously
+---
+
+#### TC50: Delete Multiple Stocks Simultaneously (System Test)
 **Test Case ID**: FR6-SYS-TC50
 **Test Case Description**: Verify multiple stocks can be deleted at once
 **Test Case Procedure**:
@@ -844,9 +559,61 @@
 
 ---
 
-### FR7: Stock Listing and Filtering System Tests
+### FR7: View All Active Stock Listings
 
-#### TC51: Stock Listing Displays All Fields
+#### TC18: Retrieve All Stocks (Unit Test)
+**Test Case ID**: FR7-TC18
+**Test Case Description**: Verify system retrieves all stocks with prices and sectors
+**Test Case Procedure**:
+1. Import db module
+2. Create multiple test stocks in different sectors
+3. Call `stocks_all()`
+4. Verify returned list includes stock_id, ticker, current_price, and sector_name
+**Expected Output**: List of all stocks with id, ticker, price, and sector information
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC32: Sector Filter Application (Integration Test)
+**Test Case ID**: FR7-INT-TC32
+**Test Case Description**: Verify sector filter correctly filters displayed stocks
+**Test Case Procedure**:
+1. Login as manager
+2. Create stocks in multiple sectors (Technology, Healthcare, Finance)
+3. Navigate to StockMarketPage
+4. Verify all stocks displayed initially
+5. Click "Filter by Sector" button
+6. Select only "Technology" checkbox
+7. Click "Apply Filter"
+8. Verify only Technology sector stocks displayed in treeview
+9. Click "Clear Filter"
+10. Verify all stocks displayed again
+**Expected Output**: Filter shows only selected sectors, clear filter shows all stocks
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC33: Multi-Sector Filter (Integration Test)
+**Test Case ID**: FR7-INT-TC33
+**Test Case Description**: Verify multiple sectors can be selected simultaneously
+**Test Case Procedure**:
+1. Login as manager (manager1/pass123)
+2. Create stocks in Technology, Healthcare, Finance, Energy sectors
+3. Navigate to StockMarketPage
+4. Click "Filter by Sector"
+5. Select "Technology" and "Healthcare" checkboxes
+6. Apply filter
+7. Verify only Technology and Healthcare stocks displayed
+8. Count stocks to ensure correct number shown
+**Expected Output**: Only stocks from selected sectors (Technology and Healthcare) are visible
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC51: Stock Listing Displays All Fields (System Test)
 **Test Case ID**: FR7-SYS-TC51
 **Test Case Description**: Verify stock listing table shows all required information
 **Test Case Procedure**:
@@ -862,7 +629,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC52: Filter by Single Sector
+---
+
+#### TC52: Filter by Single Sector (System Test)
 **Test Case ID**: FR7-SYS-TC52
 **Test Case Description**: Verify sector filtering works correctly for single sector
 **Test Case Procedure**:
@@ -881,7 +650,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC53: Filter by Multiple Sectors
+---
+
+#### TC53: Filter by Multiple Sectors (System Test)
 **Test Case ID**: FR7-SYS-TC53
 **Test Case Description**: Verify multiple sectors can be filtered simultaneously
 **Test Case Procedure**:
@@ -897,7 +668,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC54: Stock Listing as Company (Read-Only Mode)
+---
+
+#### TC54: Stock Listing as Company (Read-Only Mode) (System Test)
 **Test Case ID**: FR7-SYS-TC54
 **Test Case Description**: Verify company users see stocks in read-only mode without CRUD buttons
 **Test Case Procedure**:
@@ -915,9 +688,181 @@
 
 ---
 
-### FR8-FR12: Stock Analysis System Tests
+### FR8-FR12: Stock Analysis Functions
 
-#### TC55: Time-framed Returns Analysis for Multiple Stocks
+#### TC19: Time-framed Returns Calculation (1 Month) (Unit Test)
+**Test Case ID**: FR8-TC19
+**Test Case Description**: Verify 1-month return calculation is accurate
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with known price history
+3. Call `stock_calculate_return(stock_id, months=1)`
+4. Manually calculate expected return: ((price_now - price_30days_ago) / price_30days_ago) * 100
+5. Compare function output to manual calculation
+**Expected Output**: Return percentage matches manual calculation within 0.01%
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC20: Time-framed Returns Calculation (6 Months) (Unit Test)
+**Test Case ID**: FR8-TC20
+**Test Case Description**: Verify 6-month return calculation is accurate
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with known price history
+3. Call `stock_calculate_return(stock_id, months=6)`
+4. Manually calculate expected return: ((price_now - price_180days_ago) / price_180days_ago) * 100
+5. Compare function output to manual calculation
+**Expected Output**: Return percentage matches manual calculation within 0.01%
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC21: Time-framed Returns Calculation (1 Year) (Unit Test)
+**Test Case ID**: FR8-TC21
+**Test Case Description**: Verify 1-year return calculation is accurate
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with known price history
+3. Call `stock_calculate_return(stock_id, months=12)`
+4. Manually calculate expected return: ((price_now - price_365days_ago) / price_365days_ago) * 100
+5. Compare function output to manual calculation
+**Expected Output**: Return percentage matches manual calculation within 0.01%
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC22: 24-Hour Change Calculation (Unit Test)
+**Test Case ID**: FR8-TC22
+**Test Case Description**: Verify 24-hour price change calculation
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with known prices for today and yesterday
+3. Call `stock_calculate_24hr_change(stock_id)`
+4. Manually calculate: ((today_price - yesterday_price) / yesterday_price) * 100
+5. Compare results
+**Expected Output**: 24hr change percentage matches manual calculation
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC34: Select Multiple Stocks for Analysis (Integration Test)
+**Test Case ID**: FR8-INT-TC34
+**Test Case Description**: Verify multiple stocks can be selected via checkboxes
+**Test Case Procedure**:
+1. Login as manager
+2. Navigate to StockMarketPage
+3. Click checkboxes for 3 different stocks
+4. Verify stocks added to `self.selected_stocks` set
+5. Click "Select All" button
+6. Verify all stocks selected
+7. Click "Deselect All" button
+8. Verify all stocks deselected
+**Expected Output**: Checkbox interface correctly tracks selected stocks
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC35: Time-framed Returns Report Generation (Integration Test)
+**Test Case ID**: FR9-INT-TC35
+**Test Case Description**: Verify time-framed returns report displays correct data for selected stocks
+**Test Case Procedure**:
+1. Login as manager
+2. Create 3 test stocks with known price histories
+3. Select all 3 stocks via checkboxes
+4. Click "Analysis" menu
+5. Click "Time-framed Returns"
+6. Verify report window opens
+7. Verify report shows 1M, 6M, 1Y returns for all 3 stocks
+8. Manually verify calculations are correct
+9. Click "Save as TXT" button
+10. Verify report exported to file
+**Expected Output**: Report displays correct returns for all selected stocks, exportable to TXT
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC36: Valuation Comparison Report (Integration Test)
+**Test Case ID**: FR10-INT-TC36
+**Test Case Description**: Verify valuation comparison shows current values and growth
+**Test Case Procedure**:
+1. Login as manager
+2. Select multiple stocks
+3. Click Analysis → Valuation Comparison
+4. Verify report shows: ticker, current price, total valuation, shares, 1Y growth
+5. Manually verify: total_valuation = current_price × shares_outstanding
+6. Verify report is exportable
+**Expected Output**: Report shows accurate valuation calculations and growth percentages
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC37: Sector Benchmarking Report (Integration Test)
+**Test Case ID**: FR11-INT-TC37
+**Test Case Description**: Verify sector benchmarking compares stock to sector average
+**Test Case Procedure**:
+1. Login as manager (manager1/pass123)
+2. Create 5 stocks: 3 in Technology sector, 2 in Healthcare
+3. Navigate to StockMarketPage
+5. Click Analysis → Sector Benchmarking
+6. Verify report calculates average 1Y return for Technology sector
+7. Verify report calculates average 1Y return for Healthcare sector
+8. Verify each stock shows difference from its sector average
+9. Manually verify calculations are correct
+**Expected Output**: Each stock compared to its own sector average, differences shown
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC38: Performance Consistency Score Calculation (Integration Test)
+**Test Case ID**: FR12-INT-TC38
+**Test Case Description**: Verify consistency score based on return variance
+**Test Case Procedure**:
+1. Login as manager (manager1/pass123)
+2. Create 2 test stocks:
+   - Stock A: 1M=5%, 6M=5.5%, 1Y=6% (low variance)
+   - Stock B: 1M=20%, 6M=-10%, 1Y=5% (high variance)
+3. Navigate to StockMarketPage
+4. Select both stocks
+5. Click Analysis → Performance Consistency
+4. Verify Stock A has higher consistency score
+5. Verify score calculation: 100 - variance
+6. Manually calculate variance and verify
+**Expected Output**: Low variance stock has score near 100, high variance stock has lower score
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC39: Market Report Generation (No Selection Required) (Integration Test)
+**Test Case ID**: FR12-INT-TC39
+**Test Case Description**: Verify market report analyzes entire market regardless of selection
+**Test Case Procedure**:
+1. Create stocks across multiple sectors
+2. Login as manager
+3. Navigate to StockMarketPage (do NOT select any stocks)
+4. Click Analysis → Generate Market Report
+5. Verify report shows:
+   - Total companies listed
+   - Total market valuation (sum of all stocks)
+   - Average valuation
+   - Sector-wise distribution with percentages
+6. Manually verify calculations
+**Expected Output**: Report analyzes all stocks in database, not just selected ones
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC55: Time-framed Returns Analysis for Multiple Stocks (System Test)
 **Test Case ID**: FR8-SYS-TC55
 **Test Case Description**: End-to-end test of time-framed returns analysis
 **Test Case Procedure**:
@@ -939,7 +884,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC56: Valuation Comparison Analysis
+---
+
+#### TC56: Valuation Comparison Analysis (System Test)
 **Test Case ID**: FR10-SYS-TC56
 **Test Case Description**: End-to-end test of valuation comparison
 **Test Case Procedure**:
@@ -956,7 +903,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC57: Sector Benchmarking with Mixed Sectors
+---
+
+#### TC57: Sector Benchmarking with Mixed Sectors (System Test)
 **Test Case ID**: FR11-SYS-TC57
 **Test Case Description**: Verify sector benchmarking with stocks from different sectors
 **Test Case Procedure**:
@@ -981,7 +930,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC58: Performance Consistency Score Interpretation
+---
+
+#### TC58: Performance Consistency Score Interpretation (System Test)
 **Test Case ID**: FR12-SYS-TC58
 **Test Case Description**: Verify consistency score correctly identifies stable vs volatile stocks
 **Test Case Procedure**:
@@ -1000,7 +951,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC59: Generate Market Report (All Stocks Analysis)
+---
+
+#### TC59: Generate Market Report (All Stocks Analysis) (System Test)
 **Test Case ID**: FR12-SYS-TC59
 **Test Case Description**: Verify market report analyzes entire market without selection
 **Test Case Procedure**:
@@ -1023,9 +976,27 @@
 
 ---
 
-### NR1: Privacy and Data Handling
+## NON-FUNCTIONAL REQUIREMENTS TESTING
 
-#### TC60: Password Not Visible in UI
+### NR1: Privacy - Data Handling
+
+#### TC40: Password Hashing on Storage (Integration Test)
+**Test Case ID**: NR1-INT-TC40
+**Test Case Description**: Verify passwords are hashed before storage
+**Test Case Procedure**:
+1. Register new company user with password "TestPass123"
+2. Open data/users.txt file
+3. Verify password is NOT stored in plain text
+4. Verify password is SHA256 hashed (64-character hex string)
+5. Attempt login with "TestPass123"
+6. Verify login succeeds (hash verification works)
+**Expected Output**: Passwords stored as SHA256 hash, not plain text
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC60: Password Not Visible in UI (System Test)
 **Test Case ID**: NR1-SYS-TC60
 **Test Case Description**: Verify passwords are masked in all input fields
 **Test Case Procedure**:
@@ -1041,7 +1012,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC61: No Sensitive Data in Error Messages
+---
+
+#### TC61: No Sensitive Data in Error Messages (System Test)
 **Test Case ID**: NR1-SYS-TC61
 **Test Case Description**: Verify error messages don't expose sensitive information
 **Test Case Procedure**:
@@ -1057,9 +1030,48 @@
 
 ---
 
-### NR2: Data Integrity System Tests
+### NR2: Data Integrity Validation
 
-#### TC62: Prevent Negative Stock Values Throughout System
+#### TC23: Positive Shares Validation (Unit Test)
+**Test Case ID**: NR2-TC23
+**Test Case Description**: Verify shares outstanding must be positive
+**Test Case Procedure**:
+1. Import db module
+2. Attempt to insert stock with shares_outstanding = 0 or negative value
+3. Verify CHECK constraint prevents insertion
+**Expected Output**: Database CHECK constraint error raised
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC24: Positive Valuation Validation (Unit Test)
+**Test Case ID**: NR2-TC24
+**Test Case Description**: Verify total valuation must be positive
+**Test Case Procedure**:
+1. Import db module
+2. Attempt to insert stock with total_valuation = 0 or negative value
+3. Verify CHECK constraint prevents insertion
+**Expected Output**: Database CHECK constraint error raised
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC25: Positive Price Validation (Unit Test)
+**Test Case ID**: NR2-TC25
+**Test Case Description**: Verify stock prices must be positive
+**Test Case Procedure**:
+1. Import db module
+2. Attempt to insert stock_price record with price <= 0
+3. Verify CHECK constraint prevents insertion
+**Expected Output**: Database CHECK constraint error raised
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC62: Prevent Negative Stock Values Throughout System (System Test)
 **Test Case ID**: NR2-SYS-TC62
 **Test Case Description**: Verify system prevents negative values at all entry points
 **Test Case Procedure**:
@@ -1078,9 +1090,25 @@
 
 ---
 
-### NR3: Availability System Tests
+### NR3: Availability - Database Connection
 
-#### TC63: Application Starts Without Errors
+#### TC41: Database Initialization on Startup (Integration Test)
+**Test Case ID**: NR3-INT-TC41
+**Test Case Description**: Verify database and tables are created if missing
+**Test Case Procedure**:
+1. Delete data/mseg.db file if exists
+2. Run main.py
+3. Verify db.initialize_db() creates new database
+4. Verify all tables created: sector, company, application, stock, stock_price, attachment
+5. Verify 10 sectors are pre-populated
+6. Verify foreign key enforcement is enabled
+**Expected Output**: Database and all tables created automatically on first run
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC63: Application Starts Without Errors (System Test)
 **Test Case ID**: NR3-SYS-TC63
 **Test Case Description**: Verify application launches successfully and is available
 **Test Case Procedure**:
@@ -1095,7 +1123,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC64: Database Recovery After Corruption
+---
+
+#### TC64: Database Recovery After Corruption (System Test)
 **Test Case ID**: NR3-SYS-TC64
 **Test Case Description**: Verify system handles database corruption gracefully
 **Test Case Procedure**:
@@ -1114,9 +1144,9 @@
 
 ---
 
-### NR4: Performance System Tests
+### NR4: Performance
 
-#### TC65: Stock Listing Load Time
+#### TC65: Stock Listing Load Time (System Test)
 **Test Case ID**: NR4-SYS-TC65
 **Test Case Description**: Verify stock listing loads within 2 seconds under normal load
 **Test Case Procedure**:
@@ -1132,7 +1162,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC66: Application Review Page Load Time
+---
+
+#### TC66: Application Review Page Load Time (System Test)
 **Test Case ID**: NR4-SYS-TC66
 **Test Case Description**: Verify application review screen loads within 2 seconds
 **Test Case Procedure**:
@@ -1150,9 +1182,9 @@
 
 ---
 
-### NR5: Usability System Tests
+### NR5: Usability
 
-#### TC67: Clear Labels and Intuitive Navigation
+#### TC67: Clear Labels and Intuitive Navigation (System Test)
 **Test Case ID**: NR5-SYS-TC67
 **Test Case Description**: Verify all interface elements have clear, understandable labels
 **Test Case Procedure**:
@@ -1170,7 +1202,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC68: Consistent Filter Behavior Across System
+---
+
+#### TC68: Consistent Filter Behavior Across System (System Test)
 **Test Case ID**: NR5-SYS-TC68
 **Test Case Description**: Verify filter dialogs work consistently
 **Test Case Procedure**:
@@ -1186,7 +1220,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC69: Theme Switching (Light/Dark Mode)
+---
+
+#### TC69: Theme Switching (Light/Dark Mode) (System Test)
 **Test Case ID**: NR5-SYS-TC69
 **Test Case Description**: Verify theme toggle provides good visibility in both modes
 **Test Case Procedure**:
@@ -1207,9 +1243,9 @@
 
 ---
 
-### NR6: Scalability System Tests
+### NR6: Scalability
 
-#### TC70: System Performance with 500 Stocks
+#### TC70: System Performance with 500 Stocks (System Test)
 **Test Case ID**: NR6-SYS-TC70
 **Test Case Description**: Verify system handles large number of stocks without major degradation
 **Test Case Procedure**:
@@ -1227,7 +1263,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC71: Database Growth with 1000 Applications
+---
+
+#### TC71: Database Growth with 1000 Applications (System Test)
 **Test Case ID**: NR6-SYS-TC71
 **Test Case Description**: Verify database handles growth in applications and stocks
 **Test Case Procedure**:
@@ -1246,9 +1284,23 @@
 
 ---
 
-### NR7: Reliability System Tests
+### NR7: Reliability - Deterministic Calculations
 
-#### TC72: Return Calculation Repeatability
+#### TC26: Return Calculation Consistency (Unit Test)
+**Test Case ID**: NR7-TC26
+**Test Case Description**: Verify return calculations are repeatable with same input
+**Test Case Procedure**:
+1. Import db module
+2. Create stock with fixed price history
+3. Call `stock_calculate_return(stock_id, months=6)` ten times
+4. Verify all results are identical
+**Expected Output**: All ten calculations return exact same percentage
+**Actual Result**: _(To be filled during testing)_
+**Pass/Fail**: _(To be filled during testing)_
+
+---
+
+#### TC72: Return Calculation Repeatability (System Test)
 **Test Case ID**: NR7-SYS-TC72
 **Test Case Description**: Verify return calculations are deterministic and repeatable
 **Test Case Procedure**:
@@ -1266,7 +1318,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC73: Sector Benchmarking Calculation Determinism
+---
+
+#### TC73: Sector Benchmarking Calculation Determinism (System Test)
 **Test Case ID**: NR7-SYS-TC73
 **Test Case Description**: Verify sector benchmarking calculations are repeatable
 **Test Case Procedure**:
@@ -1286,7 +1340,9 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
-#### TC74: Price History Generation Consistency
+---
+
+#### TC74: Price History Generation Consistency (System Test)
 **Test Case ID**: NR7-SYS-TC74
 **Test Case Description**: Verify price history generation follows specified random walk model
 **Test Case Procedure**:
@@ -1323,6 +1379,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
+---
+
 ### TC76: Data Persistence Across Sessions
 **Test Case ID**: PERSIST-SYS-TC76
 **Test Case Description**: Verify all data persists after application restart
@@ -1343,6 +1401,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
+---
+
 ### TC77: Concurrent User Workflow (Sequential)
 **Test Case ID**: CONCURRENT-SYS-TC77
 **Test Case Description**: Verify two users can work with system sequentially without conflicts
@@ -1360,6 +1420,8 @@
 **Expected Output**: Users can work sequentially without data corruption or conflicts
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
+
+---
 
 ### TC78: End-to-End Full System Workflow
 **Test Case ID**: E2E-SYS-TC78
@@ -1408,6 +1470,8 @@
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
+---
+
 ### TC80: Invalid File Attachment Handling
 **Test Case ID**: NEG-TC80
 **Test Case Description**: Verify system handles invalid attachment files gracefully
@@ -1422,6 +1486,8 @@
 **Expected Output**: System validates attachments and provides clear error messages
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
+
+---
 
 ### TC81: Boundary Testing - Maximum String Lengths
 **Test Case ID**: NEG-TC81
@@ -1452,23 +1518,23 @@
 - **Negative Testing**: 3 test cases (TC79-TC81)
 
 ### Breakdown by Requirement:
-- **FR1**: 1 test case
-- **FR2**: 3 test cases
-- **FR3**: 1 test case
-- **FR4**: 6 test cases
-- **FR5**: 5 test cases
-- **FR6**: 3 test cases (stock deletion)
-- **FR7**: 5 test cases (stock listing and filtering)
-- **FR8-FR12**: 9 test cases (stock analysis)
-- **NR1**: 3 test cases
-- **NR2**: 4 test cases
-- **NR3**: 2 test cases
-- **NR4**: 2 test cases
-- **NR5**: 3 test cases
-- **NR6**: 2 test cases
-- **NR7**: 3 test cases
-- **Cross-functional**: 4 test cases
-- **Security**: 3 test cases
+- **FR1**: 3 test cases (TC1, TC27, TC42)
+- **FR2**: 3 test cases (TC2, TC3, TC4)
+- **FR3**: 3 test cases (TC5, TC28, TC43)
+- **FR4**: 8 test cases (TC6-TC11, TC30, TC44, TC45)
+- **FR5**: 8 test cases (TC12-TC16, TC29, TC46-TC48)
+- **FR6**: 4 test cases (TC17, TC31, TC49, TC50)
+- **FR7**: 7 test cases (TC18, TC32, TC33, TC51-TC54)
+- **FR8-FR12**: 15 test cases (TC19-TC22, TC34-TC39, TC55-TC59)
+- **NR1**: 3 test cases (TC40, TC60, TC61)
+- **NR2**: 4 test cases (TC23-TC25, TC62)
+- **NR3**: 3 test cases (TC41, TC63, TC64)
+- **NR4**: 2 test cases (TC65, TC66)
+- **NR5**: 3 test cases (TC67-TC69)
+- **NR6**: 2 test cases (TC70, TC71)
+- **NR7**: 4 test cases (TC26, TC72-TC74)
+- **Cross-functional**: 4 test cases (TC75-TC78)
+- **Negative Testing**: 3 test cases (TC79-TC81)
 
 ---
 
