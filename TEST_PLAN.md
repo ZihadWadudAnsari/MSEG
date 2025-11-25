@@ -911,21 +911,21 @@
 **Test Case ID**: FR8-SYS-TC55
 **Test Case Description**: End-to-end test of time-framed returns analysis
 **Test Case Procedure**:
-1. Login as manager
-2. Create 3 test stocks with price histories
-3. Navigate to Stock Market page
-4. Select all 3 stocks via checkboxes
-5. Click "Analysis" menu in header
-6. Click "Time-framed Returns"
-7. Verify report window opens with title "Time-framed Returns Analysis"
-8. Verify report shows table with columns: Ticker, 1M %, 6M %, 1Y %
-9. Verify all 3 stocks listed with calculated returns
-10. Verify percentages formatted with + or - signs
-11. Click "Save as TXT" button
-12. Choose save location
-13. Verify file saved successfully
-14. Open saved file and verify content matches display
-**Expected Output**: Report displays correct returns for selected stocks, exportable to TXT
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select 3 stocks via checkboxes
+4. Click "Analysis" menu
+5. Click "Time-framed Returns"
+6. Verify report window opens
+7. Verify report displays table with columns: Ticker, 1M %, 6M %, 1Y %
+8. Verify all 3 selected stocks are listed with return values
+9. Verify percentages show + or - signs
+10. Click "Save as TXT" button
+11. Choose save location and save file
+12. Verify file is saved successfully
+13. Open saved file and verify content is readable
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Report displays returns for selected stocks and can be exported to TXT file
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -935,16 +935,21 @@
 **Test Case ID**: FR10-SYS-TC56
 **Test Case Description**: End-to-end test of valuation comparison
 **Test Case Procedure**:
-1. Login as manager
-2. Create 3 stocks with different valuations and growth rates
-3. Select all 3 stocks
-4. Click Analysis → Valuation Comparison
-5. Verify report shows: Ticker, Current Price, Total Valuation, Shares, 1Y Growth %
-6. Manually calculate total valuation = current_price × shares
-7. Verify calculations match expected values
-8. Export report to TXT
-9. Verify export successful
-**Expected Output**: Report shows accurate valuation data for all selected stocks
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select 3 stocks via checkboxes
+4. Click "Analysis" menu
+5. Click "Valuation Comparison"
+6. Verify report window opens
+7. Verify report displays table with columns: Ticker, Current Price, Total Valuation, Shares, 1Y Growth %
+8. Verify all 3 selected stocks are listed with data
+9. Verify Total Valuation values are displayed correctly
+10. Click "Save as TXT" button
+11. Choose save location and save file
+12. Verify file is saved successfully
+13. Open saved file and verify content is readable
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Report shows accurate valuation data for all selected stocks and can be exported
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -954,24 +959,22 @@
 **Test Case ID**: FR11-SYS-TC57
 **Test Case Description**: Verify sector benchmarking with stocks from different sectors
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create stocks:
-   - Tech A: 1Y return = 10%
-   - Tech B: 1Y return = 20%
-   - Healthcare A: 1Y return = 5%
-   - Healthcare B: 1Y return = 15%
-3. Navigate to StockMarketPage
-4. Select all 4 stocks
-5. Click Analysis → Sector Benchmarking
-6. Verify report calculates:
-   - Technology average = 15% (average of 10% and 20%)
-   - Healthcare average = 10% (average of 5% and 15%)
-7. Verify each stock shows:
-   - Tech A: -5% vs sector (10% - 15%)
-   - Tech B: +5% vs sector (20% - 15%)
-   - Healthcare A: -5% vs sector (5% - 10%)
-   - Healthcare B: +5% vs sector (15% - 10%)
-**Expected Output**: Each stock correctly compared to its own sector average
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify multiple stocks from different sectors are displayed (Technology, Healthcare, etc.)
+4. Select 4 stocks: 2 from Technology sector and 2 from Healthcare sector via checkboxes
+5. Click "Analysis" menu
+6. Click "Sector Benchmarking"
+7. Verify report window opens
+8. Verify report displays sector average returns
+9. Verify Technology sector average is calculated correctly
+10. Verify Healthcare sector average is calculated correctly
+11. Verify each stock shows its difference from sector average (+ or - percentage)
+12. Verify stocks from same sector are compared to their own sector average
+13. Click "Save as TXT" button
+14. Verify report is saved successfully
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Each stock correctly compared to its own sector average with differences displayed
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -981,17 +984,20 @@
 **Test Case ID**: FR12-SYS-TC58
 **Test Case Description**: Verify consistency score correctly identifies stable vs volatile stocks
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 2 stocks:
-   - Stable Stock: 1M=5%, 6M=5.2%, 1Y=5.5% (very consistent)
-   - Volatile Stock: 1M=30%, 6M=-10%, 1Y=8% (inconsistent)
-3. Navigate to StockMarketPage
-4. Select both stocks
-5. Click Analysis → Performance Consistency
-6. Verify Stable Stock has high consistency score (close to 100)
-7. Verify Volatile Stock has lower consistency score
-8. Verify score formula: 100 - variance
-9. Manually calculate variance for both stocks and verify
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Identify stocks with different return patterns in the listing
+4. Select 2 stocks via checkboxes: one with consistent returns and one with volatile returns
+5. Click "Analysis" menu
+6. Click "Performance Consistency"
+7. Verify report window opens
+8. Verify report displays consistency score for each selected stock
+9. Verify stock with consistent returns (stable percentages across 1M, 6M, 1Y) shows higher score
+10. Verify stock with volatile returns (varying percentages) shows lower score
+11. Verify scores are displayed as numerical values
+12. Click "Save as TXT" button
+13. Verify report is saved successfully
+**Test Data**: Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Stable stock has significantly higher consistency score than volatile stock
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1002,19 +1008,24 @@
 **Test Case ID**: FR12-SYS-TC59
 **Test Case Description**: Verify market report analyzes entire market without selection
 **Test Case Procedure**:
-1. Login as manager
-2. Create 10 stocks across different sectors with known valuations
-3. Navigate to Stock Market page
-4. Do NOT select any stocks
-5. Click Analysis → Generate Market Report
-6. Verify report shows:
-   - Total Companies Listed: 10
-   - Total Market Valuation: (sum of all 10 stock valuations)
-   - Average Valuation: (total / 10)
-   - Sector Distribution table with counts and percentages
-7. Manually verify all calculations
-8. Export report
-9. Verify export successful
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify multiple stocks from different sectors are displayed
+4. Do NOT select any stocks (leave all checkboxes unchecked)
+5. Click "Analysis" menu
+6. Click "Generate Market Report"
+7. Verify report window opens
+8. Verify report displays:
+   - Total Companies Listed (count of all stocks)
+   - Total Market Valuation (sum of all stock valuations)
+   - Average Valuation (total divided by count)
+   - Sector Distribution table showing each sector with count and percentage
+9. Verify all values are displayed correctly
+10. Click "Save as TXT" button
+11. Choose save location and save file
+12. Verify file is saved successfully
+13. Open saved file and verify content is readable
+**Test Data**: Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Market report analyzes all stocks regardless of checkbox selection
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1048,15 +1059,17 @@
 **Test Case ID**: NR1-SYS-TC60
 **Test Case Description**: Verify passwords are masked in all input fields
 **Test Case Procedure**:
-1. Launch application
-2. Navigate to company signup page
-3. Enter password in password field
-4. Verify characters appear as dots or asterisks (not plain text)
-5. Navigate to login page
-6. Enter password
-7. Verify password masked
-8. Attempt to copy password from field (should copy masked characters)
-**Expected Output**: Passwords never displayed in plain text in UI
+1. Launch MSEG application
+2. On Login Portal, click "Sign Up" as Company
+3. Navigate to registration page
+4. Enter password in password field: "TestPass123"
+5. Verify characters appear as dots or asterisks (not plain text)
+6. Navigate back to login page
+7. Enter password in login password field
+8. Verify password is masked with dots or asterisks
+9. Verify password field does not reveal characters while typing
+**Test Data**: Password: TestPass123
+**Expected Output**: Passwords never displayed in plain text in UI at any point
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1066,13 +1079,17 @@
 **Test Case ID**: NR1-SYS-TC61
 **Test Case Description**: Verify error messages don't expose sensitive information
 **Test Case Procedure**:
-1. Attempt login with incorrect username
-2. Verify error message is generic: "Invalid username or password"
-3. Attempt login with correct username, wrong password
-4. Verify same generic error message (does not reveal if username exists)
-5. Attempt database operation that fails
-6. Verify error message doesn't expose SQL queries or table structure
-**Expected Output**: Error messages are user-friendly and don't leak sensitive details
+1. Launch MSEG application
+2. On Login Portal, attempt login with incorrect username: "wronguser123"
+3. Verify error message is generic: "Invalid username or password"
+4. Attempt login with existing username but wrong password
+5. Verify same generic error message appears (does not reveal if username exists)
+6. Login as Company
+7. Attempt to submit application with invalid data that might cause error
+8. Verify error messages are user-friendly
+9. Verify error messages do not expose database queries or technical details
+**Test Data**: Wrong Username: wronguser123, Existing Username with wrong password
+**Expected Output**: Error messages are user-friendly and don't leak sensitive technical details
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1129,16 +1146,21 @@
 **Test Case ID**: NR2-SYS-TC62
 **Test Case Description**: Verify system prevents negative values at all entry points
 **Test Case Procedure**:
-1. Login as company
-2. Create application with negative shares: -1000000
-3. Verify form validation rejects negative value
-4. Enter negative valuation: -500000000
-5. Verify form validation rejects
-6. Enter shares as 0
-7. Verify validation requires positive value
-8. Directly attempt database insertion with negative values (via Python console)
-9. Verify CHECK constraints prevent insertion
-**Expected Output**: System prevents negative or zero values at UI and database levels
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application
+4. Enter negative shares: -1000000
+5. Attempt to submit application
+6. Verify error message appears rejecting negative value
+7. Change to 0 shares
+8. Attempt to submit
+9. Verify validation requires positive value
+10. Enter negative valuation: -500000000
+11. Attempt to submit
+12. Verify error message appears rejecting negative valuation
+13. Verify all validations prevent form submission until positive values entered
+**Test Data**: Company Username: company1, Company Password: pass456; Negative Shares: -1000000, Zero Shares: 0, Negative Valuation: -500000000
+**Expected Output**: System prevents negative or zero values at UI validation level
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1168,14 +1190,17 @@
 **Test Case ID**: NR3-SYS-TC63
 **Test Case Description**: Verify application launches successfully and is available
 **Test Case Procedure**:
-1. Ensure data directory exists
-2. Run command: python main.py
-3. Verify application window opens within 5 seconds
-4. Verify no error dialogs appear
-5. Verify login page displays
-6. Verify all UI elements render correctly
-7. Check console for any error messages
-**Expected Output**: Application starts cleanly and is immediately usable
+1. Ensure data directory exists in project folder
+2. Open terminal and navigate to project directory
+3. Run command: python main.py
+4. Verify application window opens within 5 seconds
+5. Verify no error dialogs appear during startup
+6. Verify login page displays correctly
+7. Verify all UI elements (buttons, text fields, labels) render correctly
+8. Verify no console error messages appear in terminal
+9. Verify application is responsive and clickable
+**Test Data**: None required
+**Expected Output**: Application starts cleanly and is immediately usable without errors
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1185,16 +1210,22 @@
 **Test Case ID**: NR3-SYS-TC64
 **Test Case Description**: Verify system handles database corruption gracefully
 **Test Case Procedure**:
-1. Close application
-2. Corrupt database file (write random bytes to data/mseg.db)
-3. Launch application
-4. Verify error message appears indicating database issue
-5. Delete corrupted database
-6. Relaunch application
-7. Verify system creates new clean database
-8. Verify sectors are repopulated
-9. Verify application is usable
-**Expected Output**: System detects corruption and can recover with fresh database
+1. Launch MSEG application and verify it works
+2. Close application completely
+3. Navigate to data directory in file explorer
+4. Corrupt database file by modifying data/mseg.db with random content
+5. Launch application again
+6. Verify error message appears indicating database issue or application fails to start
+7. Close application
+8. Delete corrupted database file (data/mseg.db)
+9. Relaunch application
+10. Verify system creates new clean database automatically
+11. Login as Stock Manager (manager1/pass123)
+12. Navigate to Stock Market page
+13. Verify sectors are available in filter
+14. Verify application is fully usable
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: System detects corruption and can recover with fresh database initialization
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1206,15 +1237,19 @@
 **Test Case ID**: NR4-SYS-TC65
 **Test Case Description**: Verify stock listing loads within 2 seconds under normal load
 **Test Case Procedure**:
-1. Create 100 test stocks with full price history
-2. Login as manager (manager1/pass123)
-3. Start timer
-4. Navigate to Stock Market page
-5. Stop timer when all stocks rendered in table
-6. Verify load time < 2 seconds
-7. Apply filter
-8. Verify filter applies within 2 seconds
-**Expected Output**: Stock listing with 100 stocks loads and renders within 2 seconds
+1. Ensure database has at least 100 stocks with full price history
+2. Login as Stock Manager
+3. Start timer/stopwatch
+4. Click "Stock Market" navigation menu
+5. Stop timer when all stocks are fully rendered in table
+6. Verify load time is less than 2 seconds
+7. Click "Filter by Sector" button
+8. Select a sector and click "Apply Filter"
+9. Verify filter applies within 2 seconds
+10. Click "Clear Filter"
+11. Verify all stocks reappear within 2 seconds
+**Test Data**: Manager Username: manager1, Manager Password: pass123; Database with 100+ stocks
+**Expected Output**: Stock listing with 100 stocks loads and renders within 2 seconds, filters apply quickly
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1224,15 +1259,18 @@
 **Test Case ID**: NR4-SYS-TC66
 **Test Case Description**: Verify application review screen loads within 2 seconds
 **Test Case Procedure**:
-1. Create 50 pending applications
-2. Login as manager (manager1/pass123)
-3. Start timer
-4. Navigate to Manager Portal page
-5. Stop timer when all pending applications rendered
-6. Verify load time < 2 seconds
-7. Select an application
-8. Verify details load within 1 second
-**Expected Output**: Manager portal loads quickly even with many pending applications
+1. Ensure database has at least 50 pending applications
+2. Login as Stock Manager
+3. Start timer/stopwatch
+4. Click "Manager Portal" navigation menu
+5. Stop timer when all pending applications are rendered
+6. Verify load time is less than 2 seconds
+7. Click on an application to view details
+8. Verify application details load within 1 second
+9. Navigate between Pending, Approved, and Rejected tabs
+10. Verify each tab loads within 2 seconds
+**Test Data**: Manager Username: manager1, Manager Password: pass123; Database with 50+ pending applications
+**Expected Output**: Manager portal loads quickly even with many pending applications (< 2 seconds)
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1244,16 +1282,19 @@
 **Test Case ID**: NR5-SYS-TC67
 **Test Case Description**: Verify all interface elements have clear, understandable labels
 **Test Case Procedure**:
-1. Launch application
-2. Review all buttons, labels, and menu items on login page
-3. Verify all text is clear and unambiguous
-4. Login as company
-5. Review header navigation menu
-6. Verify menu items clearly indicate their function
-7. Navigate through all pages
-8. Verify form field labels are descriptive
-9. Verify button actions are clear (e.g., "Submit Application" not just "Submit")
-10. Ask non-technical user to navigate system without instructions
+1. Launch MSEG application
+2. Review login page: verify all buttons and labels are clear
+3. Verify "Company" and "Manager" options are clearly labeled
+4. Verify "Sign Up" and "Login" buttons are clearly distinguishable
+5. Login as Company
+6. Review header navigation menu items
+7. Verify menu items clearly indicate their function (e.g., "My Applications", "Stock Market")
+8. Navigate to My Applications page
+9. Verify form field labels are descriptive (e.g., "Proposed Ticker", "Proposed Shares")
+10. Verify button actions are clear (e.g., "Submit Application" not just "Submit")
+11. Navigate through all pages and verify labels are consistent and clear
+12. Verify error messages are clear and helpful
+**Test Data**: Company Username: company1, Company Password: pass456
 **Expected Output**: All UI elements have clear, intuitive labels; navigation is self-explanatory
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1264,15 +1305,20 @@
 **Test Case ID**: NR5-SYS-TC68
 **Test Case Description**: Verify filter dialogs work consistently
 **Test Case Procedure**:
-1. Login as manager
+1. Login as Stock Manager
 2. Navigate to Stock Market page
-3. Open sector filter dialog
-4. Verify checkboxes for all sectors present
-5. Verify "Apply Filter" and "Clear Filter" buttons visible
-6. Apply filter and verify results
-7. Clear filter and verify all stocks shown
-8. Verify same filter pattern used throughout application
-**Expected Output**: Filter interface is consistent and predictable across all uses
+3. Click "Filter by Sector" button
+4. Verify filter dialog/window opens
+5. Verify checkboxes for all sectors are present and clearly labeled
+6. Verify "Apply Filter" and "Clear Filter" buttons are visible
+7. Select one sector checkbox and click "Apply Filter"
+8. Verify only stocks from selected sector are displayed
+9. Click "Filter by Sector" again
+10. Click "Clear Filter"
+11. Verify all stocks are displayed again
+12. Verify filter behavior is consistent throughout the application
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Filter interface is consistent, intuitive, and predictable across all uses
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1282,18 +1328,21 @@
 **Test Case ID**: NR5-SYS-TC69
 **Test Case Description**: Verify theme toggle provides good visibility in both modes
 **Test Case Procedure**:
-1. Login as company (company1/pass456)
-2. Verify application starts in light mode
+1. Login as Company
+2. Verify application starts in light mode (if applicable)
 3. Verify all text is readable against light background
-4. Click theme toggle button in header
-5. Verify application switches to dark mode
-6. Verify all text is readable against dark background
-7. Verify colors provide good contrast
-8. Navigate through different pages
-9. Verify theme persists across page changes
-10. Toggle back to light mode
-11. Verify smooth transition
-**Expected Output**: Both themes provide excellent readability and visual comfort
+4. Locate theme toggle button in header/menu
+5. Click theme toggle button
+6. Verify application switches to dark mode
+7. Verify all text is readable against dark background
+8. Verify colors provide good contrast in dark mode
+9. Navigate through different pages (My Applications, Stock Market)
+10. Verify theme persists across all page changes
+11. Click theme toggle button again
+12. Verify application switches back to light mode
+13. Verify smooth transition between themes
+**Test Data**: Company Username: company1, Company Password: pass456
+**Expected Output**: Both themes provide excellent readability and visual comfort, theme persists across navigation
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1305,16 +1354,22 @@
 **Test Case ID**: NR6-SYS-TC70
 **Test Case Description**: Verify system handles large number of stocks without major degradation
 **Test Case Procedure**:
-1. Create script to generate 500 stocks with full price histories
-2. Run script to populate database
-3. Launch application and login as manager
-4. Navigate to Stock Market page
-5. Measure load time
-6. Verify all stocks display correctly
-7. Apply filters and measure response time
-8. Select multiple stocks and run analysis
-9. Verify analysis completes successfully
-10. Monitor memory usage during operations
+1. Ensure database has 500 stocks with full price histories
+2. Launch MSEG application
+3. Login as Stock Manager
+4. Start timer/stopwatch
+5. Click "Stock Market" navigation menu
+6. Stop timer when page loads
+7. Verify load time is acceptable (< 5 seconds)
+8. Verify all stocks display correctly in the listing
+9. Click "Filter by Sector"
+10. Apply a filter and measure response time
+11. Verify filter applies within acceptable time (< 3 seconds)
+12. Select multiple stocks via checkboxes
+13. Click Analysis → Time-framed Returns
+14. Verify analysis completes successfully within reasonable time
+15. Verify application remains responsive throughout
+**Test Data**: Manager Username: manager1, Manager Password: pass123; Database with 500 stocks
 **Expected Output**: System handles 500 stocks with acceptable performance (load < 5 seconds)
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1325,16 +1380,23 @@
 **Test Case ID**: NR6-SYS-TC71
 **Test Case Description**: Verify database handles growth in applications and stocks
 **Test Case Procedure**:
-1. Create script to generate 1000 applications
-2. Approve 500 of them (creates 500 stocks with 366 prices each = 183,000 price records)
-3. Verify database file size is manageable (< 500MB)
-4. Launch application
-5. Login as manager (manager1/pass123)
-6. Verify startup time is reasonable
-7. Navigate to manager portal
-8. Verify pending/approved/rejected lists load
-9. Test database query performance with large dataset
-**Expected Output**: System scales to 1000 applications and 500 stocks without redesign
+1. Ensure database has 1000 applications (500 approved, 250 pending, 250 rejected)
+2. Verify database file size in data directory (should be < 500MB)
+3. Launch MSEG application
+4. Measure startup time from launch to login page display
+5. Login as Stock Manager
+6. Verify startup time is reasonable (< 10 seconds)
+7. Click "Manager Portal" navigation menu
+8. Verify Pending applications list loads
+9. Click "Approved" tab
+10. Verify Approved applications list loads
+11. Click "Rejected" tab
+12. Verify Rejected applications list loads
+13. Navigate to Stock Market page
+14. Verify 500 stocks load and display correctly
+15. Verify application remains responsive throughout
+**Test Data**: Manager Username: manager1, Manager Password: pass123; Database with 1000 applications
+**Expected Output**: System scales to 1000 applications and 500 stocks without performance issues
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1362,17 +1424,23 @@
 **Test Case ID**: NR7-SYS-TC72
 **Test Case Description**: Verify return calculations are deterministic and repeatable
 **Test Case Procedure**:
-1. Create stock with fixed price history
-2. Login as manager
-3. Select stock and run Time-framed Returns analysis
-4. Record 1M, 6M, 1Y return values
-5. Close and reopen analysis
-6. Verify identical return values
-7. Restart application
-8. Run analysis again
-9. Verify values still identical
-10. Repeat 10 times
-**Expected Output**: All calculations return exact same values every time
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select a stock via checkbox
+4. Click Analysis → Time-framed Returns
+5. Record the 1M, 6M, 1Y return values displayed
+6. Close the analysis report window
+7. Immediately select the same stock again
+8. Click Analysis → Time-framed Returns
+9. Verify the return values are identical to step 5
+10. Close application completely
+11. Relaunch application and login as Stock Manager
+12. Run the same analysis again on the same stock
+13. Verify values are still identical
+14. Repeat this process 3 more times
+15. Verify all values remain consistent across all runs
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: All calculations return exact same values every time the analysis is run
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1382,19 +1450,23 @@
 **Test Case ID**: NR7-SYS-TC73
 **Test Case Description**: Verify sector benchmarking calculations are repeatable
 **Test Case Procedure**:
-1. Login as manager (manager1/pass123)
-2. Create 5 stocks in Technology sector with known returns
-3. Navigate to StockMarketPage and select all 5 stocks
-4. Run Sector Benchmarking analysis
-5. Record sector average and individual stock differences
-6. Run analysis again
-7. Verify identical results
-8. Add 6th stock to Technology sector
-9. Run analysis
-10. Verify sector average recalculated correctly
-11. Remove 6th stock
-12. Verify sector average returns to original value
-**Expected Output**: Benchmarking calculations are deterministic and update correctly with data changes
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Identify and select 5 stocks from Technology sector via checkboxes
+4. Click Analysis → Sector Benchmarking
+5. Record the Technology sector average and individual stock differences displayed
+6. Close analysis report window
+7. Select the same 5 Technology stocks again
+8. Click Analysis → Sector Benchmarking
+9. Verify results are identical to step 5
+10. Close and relaunch application
+11. Login as Stock Manager
+12. Run the same analysis with the same 5 stocks
+13. Verify values remain identical
+14. Repeat this process 2 more times
+15. Verify all calculations remain consistent
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Benchmarking calculations are deterministic and return identical results every time
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1404,15 +1476,22 @@
 **Test Case ID**: NR7-SYS-TC74
 **Test Case Description**: Verify price history generation follows specified random walk model
 **Test Case Procedure**:
-1. Create application with shares=1,000,000 and valuation=500,000,000
-2. Approve application (triggers price generation)
-3. Verify initial price = valuation / shares = 500.00
-4. Query all 366 price records
-5. For each consecutive day pair, calculate daily change percentage
-6. Verify all daily changes are within ±1.5% range
-7. Verify no prices are negative or zero
-8. Verify prices follow realistic random walk (no impossible jumps)
-**Expected Output**: Generated prices follow random walk model with ±1.5% daily variance
+1. Login as Company
+2. Submit new application with Proposed Shares: 1,000,000 and Proposed Valuation: 500,000,000
+3. Logout and Login as Stock Manager
+4. Navigate to Manager Portal
+5. Approve the application (this triggers price generation)
+6. Navigate to Stock Market page
+7. Verify new stock appears in listing
+8. Verify initial stock price displayed = 500.00 (valuation / shares)
+9. Verify stock displays return percentages for 24hr, 1M, 6M, 1Y
+10. Verify all return percentages are displayed (not blank or error)
+11. Verify no prices shown are negative or zero
+12. Verify percentage changes are realistic (not extreme jumps like +500%)
+13. Refresh page multiple times
+14. Verify prices remain consistent (deterministic, not regenerated)
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123; Shares: 1000000, Valuation: 500000000
+**Expected Output**: Generated prices follow realistic model, initial price is correct, values are consistent
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1424,15 +1503,22 @@
 **Test Case ID**: RBAC-SYS-TC75
 **Test Case Description**: Verify company and manager users have appropriate access levels
 **Test Case Procedure**:
-1. Login as company user
-2. Verify Stock Market page is read-only (no checkboxes, no delete button)
-3. Verify Analysis menu is NOT available
-4. Verify can only see own applications in My Applications
-5. Logout and login as manager
-6. Verify Stock Market page has full access (checkboxes, delete, analysis)
-7. Verify can see all applications in Manager Portal
-8. Verify can approve/reject applications
-9. Attempt to directly access manager functions as company user (via URL manipulation if applicable)
+1. Login as Company
+2. Navigate to Stock Market page
+3. Verify page is read-only: no checkboxes appear next to stocks
+4. Verify no "Delete Selected" button is visible
+5. Verify "Analysis" menu is NOT available
+6. Navigate to My Applications
+7. Verify can only see own applications (not other companies' applications)
+8. Logout and Login as Stock Manager
+9. Navigate to Stock Market page
+10. Verify checkboxes appear next to stocks
+11. Verify "Delete Selected" button is visible
+12. Verify "Analysis" menu is available
+13. Navigate to Manager Portal
+14. Verify can see all applications from all companies
+15. Verify can approve/reject applications
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Company users limited to read-only stock view and own applications, managers have full access
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1443,18 +1529,25 @@
 **Test Case ID**: PERSIST-SYS-TC76
 **Test Case Description**: Verify all data persists after application restart
 **Test Case Procedure**:
-1. Login as company and create application
-2. Note application ID
-3. Logout and login as manager
-4. Approve application
-5. Note created stock ticker
-6. Close application completely
-7. Relaunch application
-8. Login as manager
-9. Verify application still shows as approved
-10. Navigate to Stock Market
-11. Verify stock still exists with all data intact
-12. Verify price history still available
+1. Login as Company
+2. Navigate to My Applications
+3. Create and submit new application
+4. Note application ticker symbol
+5. Logout and Login as Stock Manager
+6. Navigate to Manager Portal
+7. Approve the application
+8. Navigate to Stock Market
+9. Verify stock appears in listing
+10. Note the stock's current price and return percentages
+11. Close application completely
+12. Relaunch application
+13. Login as Stock Manager
+14. Navigate to Manager Portal
+15. Verify application still shows as approved in Approved tab
+16. Navigate to Stock Market
+17. Verify stock still exists in listing
+18. Verify stock price and data are intact (same values as step 10)
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
 **Expected Output**: All data persists correctly after application restart
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1465,16 +1558,23 @@
 **Test Case ID**: CONCURRENT-SYS-TC77
 **Test Case Description**: Verify two users can work with system sequentially without conflicts
 **Test Case Procedure**:
-1. User A (company) logs in and submits application
-2. User A logs out
-3. User B (manager) logs in
-4. User B sees User A's application in pending list
-5. User B approves application
-6. User B logs out
-7. User A logs in again
-8. User A sees approved status
-9. User A navigates to Stock Market
-10. User A sees newly listed stock
+1. User A: Login as Company (company1/pass456)
+2. User A: Navigate to My Applications
+3. User A: Create and submit new application
+4. User A: Note the ticker symbol
+5. User A: Logout
+6. User B: Login as Stock Manager (manager1/pass123)
+7. User B: Navigate to Manager Portal
+8. User B: Verify User A's application appears in Pending list
+9. User B: Select and approve the application
+10. User B: Verify application moves to Approved list
+11. User B: Logout
+12. User A: Login again as Company (company1/pass456)
+13. User A: Navigate to My Applications
+14. User A: Verify application shows approved status
+15. User A: Navigate to Stock Market
+16. User A: Verify newly listed stock appears with ticker from step 4
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Users can work sequentially without data corruption or conflicts
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1485,26 +1585,41 @@
 **Test Case ID**: E2E-SYS-TC78
 **Test Case Description**: Complete system test covering all major features
 **Test Case Procedure**:
-1. Register new company account
-2. Login and submit 2 applications
-3. Logout and login as manager
-4. Approve 1st application, reject 2nd application
-5. Verify stock created for approved application
-6. Navigate to Stock Market
-7. Verify new stock appears in listing
-8. Create 2 more stocks directly (from other approved apps)
-9. Apply sector filter to view subset of stocks
-10. Select multiple stocks
-11. Run all analysis reports: Time-framed Returns, Valuation Comparison, Sector Benchmarking, Consistency Score
-12. Generate Market Report
-13. Export all reports to TXT files
-14. Delete one stock
-15. Verify stock removed
-16. Logout and login as company
-17. Verify can see approved stock in Stock Market (read-only)
-18. Verify can see rejection notes for rejected application
-19. Switch between light and dark themes
-20. Logout
+1. Launch MSEG application
+2. On Login Portal, click "Sign Up" as Company
+3. Register new company account with all required fields
+4. Login with new credentials
+5. Navigate to My Applications
+6. Submit 2 applications with different tickers
+7. Logout and Login as Stock Manager
+8. Navigate to Manager Portal
+9. Approve 1st application
+10. Reject 2nd application with rejection notes
+11. Navigate to Stock Market
+12. Verify new stock from approved application appears in listing
+13. Verify stock displays price, sector, and return percentages
+14. Click "Filter by Sector" and apply filter
+15. Verify only stocks from selected sector are displayed
+16. Clear filter and verify all stocks return
+17. Select 3 stocks via checkboxes
+18. Click Analysis → Time-framed Returns
+19. Verify report displays and export to TXT
+20. Run Valuation Comparison analysis and export
+21. Run Sector Benchmarking analysis and export
+22. Run Performance Consistency analysis and export
+23. Click Analysis → Generate Market Report (without selecting stocks)
+24. Verify market report displays and export to TXT
+25. Select one stock and click "Delete Selected"
+26. Confirm deletion and verify stock is removed
+27. Logout and Login as Company (the new account from step 3)
+28. Navigate to Stock Market
+29. Verify can see approved stock in read-only mode (no checkboxes)
+30. Navigate to My Applications
+31. Verify can see rejection notes for rejected application
+32. Locate theme toggle button and switch between light/dark modes
+33. Verify theme changes work correctly
+34. Logout
+**Test Data**: New Company registration details; Manager Username: manager1, Manager Password: pass123
 **Expected Output**: All features work together cohesively in realistic usage scenario
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1517,13 +1632,22 @@
 **Test Case ID**: SEC-NEG-TC79
 **Test Case Description**: Verify system is protected against SQL injection attacks
 **Test Case Procedure**:
-1. Attempt login with username: `admin' OR '1'='1`
-2. Verify login fails (not vulnerable)
-3. Create application with company name: `Test'; DROP TABLE stock; --`
-4. Submit application
-5. Verify application stored safely without executing SQL
-6. Verify stock table still exists
-7. Test other input fields with SQL injection patterns
+1. On Login Portal, attempt login with username: `admin' OR '1'='1`
+2. Enter any password
+3. Click Login
+4. Verify login fails with error message (system not vulnerable)
+5. Login as Company with valid credentials
+6. Navigate to My Applications
+7. Create New Application
+8. Enter malicious ticker: `TEST'; DROP TABLE stock; --`
+9. Attempt to submit application
+10. Verify application is either rejected by validation or safely stored without executing SQL
+11. Login as Stock Manager
+12. Navigate to Stock Market
+13. Verify stock table still exists and stocks are displayed (table not dropped)
+14. Test other input fields (company name, notes) with SQL injection patterns
+15. Verify all inputs are safely handled
+**Test Data**: Malicious inputs: `admin' OR '1'='1`, `TEST'; DROP TABLE stock; --`
 **Expected Output**: System safely handles SQL injection attempts without execution
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -1534,14 +1658,22 @@
 **Test Case ID**: NEG-TC80
 **Test Case Description**: Verify system handles invalid attachment files gracefully
 **Test Case Procedure**:
-1. Login as company
-2. Create application
-3. Attempt to attach non-existent file
-4. Verify error message appears
-5. Attempt to attach executable file (.exe) if validation exists
-6. Attempt to attach extremely large file (>100MB)
-7. Verify appropriate error messages or handling
-**Expected Output**: System validates attachments and provides clear error messages
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application
+4. Fill all required fields
+5. Click "Attach Document" or file browser button
+6. Attempt to select a non-existent file path (if possible via manual entry)
+7. Verify error message appears or selection is prevented
+8. Attempt to attach an executable file (.exe) if validation exists
+9. Verify appropriate error or warning appears
+10. Attempt to attach an extremely large file (>100MB) if validation exists
+11. Verify error message about file size appears
+12. Attach a valid PDF document
+13. Verify attachment is accepted
+14. Submit application successfully
+**Test Data**: Company Username: company1, Company Password: pass456; Invalid files: non-existent path, .exe file, large file (>100MB); Valid file: PDF document
+**Expected Output**: System validates attachments and provides clear error messages for invalid files
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1551,15 +1683,25 @@
 **Test Case ID**: NEG-TC81
 **Test Case Description**: Verify system handles very long input strings
 **Test Case Procedure**:
-1. Login as company (company1/pass456)
-2. Navigate to application form
-3. Create application with 1000-character company name
-4. Attempt to submit
-5. Verify system handles appropriately (truncation or validation error)
-6. Test with maximum username length (10 chars) and 11 chars during registration
-7. Test password with 31 characters (max is 30) during registration
-8. Verify appropriate validation messages
-**Expected Output**: System enforces reasonable length limits with clear messages
+1. On Login Portal, click "Sign Up" as Company
+2. Navigate to registration form
+3. Enter username with 11 characters (assuming max is 10 characters)
+4. Attempt to submit registration
+5. Verify validation error message about maximum username length
+6. Enter password with 31 characters (assuming max is 30 characters)
+7. Attempt to submit registration
+8. Verify validation error message about maximum password length
+9. Use valid credentials and complete registration
+10. Login as Company
+11. Navigate to My Applications
+12. Create New Application
+13. Enter company name with 1000 characters in the field
+14. Attempt to submit application
+15. Verify system handles appropriately (truncation, validation error, or character limit)
+16. Enter valid inputs with appropriate lengths
+17. Submit application successfully
+**Test Data**: Company Username: company1, Company Password: pass456; Long username (11 chars), Long password (31 chars), Long company name (1000 chars)
+**Expected Output**: System enforces reasonable length limits with clear validation messages
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
