@@ -9,15 +9,15 @@
 
 #### TC1: Retrieve All Pending Applications (Unit Test)
 **Test Case ID**: FR1-TC1
-**Test Case Description**: Verify that the system retrieves all pending applications from database
+**Test Case Description**: Retrieve all Approved, Pending and Rejected Applications.
 **Test Case Procedure**:
-1. Open Python interpreter and import db module
-2. Create test applications with status='pending' using `application_insert()`
-3. Call `applications_pending_all()`
-4. Verify returned list contains only pending applications
-**Expected Output**: Function returns list of tuples containing only applications with status='pending'
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login as Stock Manager
+2. Select Application portal, this calls applications_pending_all(), applications_approved_all() and applications_rejected_all().
+3. Verify returned list contains all correct status applications.
+**Test Data**: Username: manager1, Password: pass123
+**Expected Output**: Function returns list of tuples containing applications with status='pending', 'approved' and 'rejected'.
+**Actual Result**: All applications are under correct status list.
+**Pass/Fail**: PASS
 
 ---
 
@@ -89,15 +89,17 @@
 
 #### TC2: Application Approval Status Update (Unit Test)
 **Test Case ID**: FR2-TC2
-**Test Case Description**: Verify application status changes to 'approved' in database
+**Test Case Description**: Verify application status changes to 'Approved' in database.
 **Test Case Procedure**:
-1. Import db module
-2. Insert test application with status='pending'
-3. Call `application_set_approved(application_id)`
-4. Query application table to verify status='approved'
-**Expected Output**: Application status in database is updated to 'approved'
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login as a Company
+2. Submit test application with status='pending'
+3. Login as Stock Manager
+4. Approve that test application
+5. Verify status is set to 'approved' status on company application portal
+**Test Data**: Company Username: Crusties, Company Password: Pass1234, Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Application status in portal is updated to 'approved'
+**Actual Result**: Crusties application status is updated to 'Approved'.
+**Pass/Fail**: PASS
 
 ---
 
@@ -105,14 +107,13 @@
 **Test Case ID**: FR2-TC3
 **Test Case Description**: Verify stock is created when application is approved
 **Test Case Procedure**:
-1. Import db module
-2. Insert test application with valid data
-3. Call `stock_create_from_application(app_id)`
-4. Query stock table to verify new stock exists
-5. Verify stock ticker matches application ticker
-**Expected Output**: New stock record created with ticker, shares, and valuation from application
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login as a Stock Manager.
+2. Approve a Stock.
+3. Verify new stock has been created on stock market page.
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: New stock record created from application onto the stock market page
+**Actual Result**: Crusties stock created and listed on stock market.
+**Pass/Fail**: PASS
 
 ---
 
@@ -135,15 +136,30 @@
 
 #### TC5: Application Rejection Status Update (Unit Test)
 **Test Case ID**: FR3-TC5
-**Test Case Description**: Verify application status changes to 'rejected' with notes
+**Test Case Description**: Verify application status changes to 'rejected' with notes.
 **Test Case Procedure**:
-1. Import db module
-2. Insert test application with status='pending'
-3. Call `application_set_rejected(app_id, "Test rejection reason")`
-4. Query application to verify status='rejected' and internal_notes field contains reason
-**Expected Output**: Application status='rejected' and internal_notes contains rejection reason
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login as a Stock Manager
+2. Reject Application & Input Rejection Note
+3. Login as Company
+4. Verify application to verify status='rejected' and rejection notes are present
+**Test Data**: Manager Username: manager1, Manager Password: pass123, Company Username: aps, Company Password: Pass1234
+**Expected Output**: Application status='rejected' and contains rejection reason submitted by the stock manager.
+**Actual Result**: APS Application status set to "rejected" and includes rejection note.
+**Pass/Fail**: PASS
+
+---
+
+#### TC6: Rejection Fails Without Reason (Unit Test)
+**Test Case ID**: FR3-TC6
+**Test Case Description**: Verify rejection fails without reason.
+**Test Case Procedure**:
+1. Login as a Stock Manager
+2. Attempt to reject pending application
+3. Leave reason field empty.
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: System shows error: 'Please provide a rejection note.' Status remains 'pending'.
+**Actual Result**: Error Message was displayed & Status remained 'Pending'.
+**Pass/Fail**: PASS
 
 ---
 
@@ -201,69 +217,73 @@
 **Test Case ID**: FR4-TC6
 **Test Case Description**: Verify ticker must be 3-4 capital letters only
 **Test Case Procedure**:
-1. Open ApplicationFormPage in test mode
-2. Test invalid tickers: "AB" (too short), "ABCDE" (too long), "ab12" (lowercase/numbers)
-3. Verify validation function rejects these inputs
-4. Test valid ticker "MSFT"
-**Expected Output**: Invalid tickers rejected, valid ticker accepted
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login on Company Account
+2. Select New Application
+3. Test invalid tickers: "AB" (too short), "ABCDE" (too long), "ab12" (lowercase/numbers)
+4. Verify validation function rejects these inputs
+**Test Data**: Company Username: company1, Company Password: pass456
+**Expected Output**: With each instance, the error ticker message would be displayed.
+**Actual Result**: On all three Invalid tickers instances, the error ticker message displayed; "Proposed Ticker must be 3 to 4 capital LETTERS only"
+**Pass/Fail**: PASS
 
 ---
 
 #### TC7: Duplicate Ticker Prevention (Unit Test)
 **Test Case ID**: FR4-TC7
-**Test Case Description**: Verify system prevents duplicate ticker symbols
+**Test Case Description**: Verify system prevents duplicate ticker symbols.
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with ticker "TEST"
-3. Attempt to create application with same ticker "TEST"
-4. Verify validation check in ApplicationFormPage.submit() detects duplicate (lines 472-476)
-**Expected Output**: Error message "Ticker TEST is already in use" displayed
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login on Company Account
+2. Select New Application
+3. Create Stock with ticker "NVDA"
+4. Attempt to create application with same ticker "NVDA"
+**Test Data**: Company Username: company1, Company Password: pass456, Proposed Ticker: NVDA
+**Expected Output**: An error message would be displayed about ticker being in used already.
+**Actual Result**: Error Message displayed; "The ticker symbol 'NVDA' is already listed in the stock market. Please choose a different ticker."
+**Pass/Fail**: PASS
 
 ---
 
 #### TC8: Valuation Lower Bound Check (Unit Test)
 **Test Case ID**: FR4-TC8
-**Test Case Description**: Verify valuation must be at least 100 million
+**Test Case Description**: Verify valuation must be a minimum of at least 100 million.
 **Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Enter valuation of 50,000,000 (50 million)
-3. Attempt to submit application
-4. Verify validation check at lines 501-504 in pages.py rejects submission
-**Expected Output**: Error message "Total valuation must be at least 100 million"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login on Company Account
+2. Select New Application
+3. Enter valuation of 50,000,000
+4. Attempt to submit application
+**Test Data**: Company Username: company1, Company Password: pass456, Proposed Valuation: 50000000
+**Expected Output**: An error message would be displayed that a minimum 100 million valuation is required.
+**Actual Result**: Error Message displayed; "The proposed valuation is below 100 million. This does not meet the minimum MSEG listing requirements"
+**Pass/Fail**: PASS
 
 ---
 
 #### TC9: Valuation Upper Bound Check (Unit Test)
 **Test Case ID**: FR4-TC9
-**Test Case Description**: Verify valuation cannot exceed 500 billion
+**Test Case Description**: Verify valuation cannot exceed 500 billion.
 **Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Enter valuation of 600,000,000,000 (600 billion)
-3. Attempt to submit application
-4. Verify validation check at lines 497-499 rejects submission
-**Expected Output**: Error message "Total valuation must not exceed 500 billion"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login on Company Account
+2. Select New Application
+3. Enter valuation of 600,000,000,000
+4. Attempt to submit application
+**Test Data**: Company Username: company1, Company Password: pass456, Proposed Valuation: 600000000000
+**Expected Output**: An error message would be displayed that a valuation cannot exceed 500 billion.
+**Actual Result**: Error Message displayed; "The proposed valuation exceeds 500 billion. This valuation appears to be inflated and does not meet MSEG listing requirements."
+**Pass/Fail**: PASS
 
 ---
 
 #### TC10: Missing Required Fields (Unit Test)
 **Test Case ID**: FR4-TC10
-**Test Case Description**: Verify all required fields must be filled
+**Test Case Description**: Verify all required inputs and attachments are provided.
 **Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Leave one or more fields empty (e.g., company name)
-3. Attempt to submit application
-4. Verify validation check at lines 455-464 prevents submission
-**Expected Output**: Error message "All fields must be filled" displayed
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. Login on Company Account
+2. Select New Application
+3. Attempt to submit application with one or more fields empty.
+**Test Data**: Company Username: company1, Company Password: pass456
+**Expected Output**: An error message would be displayed that all fields must be filled.
+**Actual Result**: Error Messages "Please upload legal, financial, and corporate governance documents.", "Please input Proposed Shares.", "Please input Proposed Ticker." and "Please upload legal, financial, and corporate governance documents." displayed.
+**Pass/Fail**: PASS
 
 ---
 
@@ -345,13 +365,13 @@
 **Test Case ID**: FR5-TC12
 **Test Case Description**: Verify company must be incorporated for at least 3 years
 **Test Case Procedure**:
-1. Open InlineCompanySignup form
-2. Enter incorporation date less than 3 years ago (e.g., 2023-01-01 if today is 2025-11-24)
+1. On Login Portal, Select Company then Sign-Up Option
+2. Enter incorporation date less than 3 years ago
 3. Attempt to submit registration
-4. Verify validation at lines 108-114 in pages.py rejects submission
-**Expected Output**: Error message "Company must be incorporated at least 3 years ago"
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+**Test Data**: Incorporation Date: 2024-01-01
+**Expected Output**: An error message would be displayed that the company must be incorporated at least 3 years ago.
+**Actual Result**: Error message displayed; "The company does not meet the minimum age requirement for MSEG listing. Companies must be incorporated for at least 3 years to comply with MSEG regulatory standards."
+**Pass/Fail**: PASS
 
 ---
 
@@ -359,25 +379,25 @@
 **Test Case ID**: FR5-TC13
 **Test Case Description**: Verify duplicate registration numbers are prevented
 **Test Case Procedure**:
-1. Import db module
-2. Insert company with registration number "12345678"
-3. Attempt to insert another company with same registration number
-4. Verify UNIQUE constraint on company.registration_number prevents duplicate
-**Expected Output**: Database error "UNIQUE constraint failed" raised
-**Actual Result**: _(To be filled during testing)_
-**Pass/Fail**: _(To be filled during testing)_
+1. On Login Portal, Select Company then Sign-Up Option
+2. Enter company with registration number "12345678"
+3. Attempt to submit another company with same registration number
+**Test Data**: Company Name: Crusties, Registration No: 12237364
+**Expected Output**: There should be an error message generated that the registration number already exists.
+**Actual Result**: Error Message displayed; "That registration number already exists"
+**Pass/Fail**: PASS
 
 ---
 
 #### TC14: Companies House API Verification (Unit Test)
 **Test Case ID**: FR5-TC14
-**Test Case Description**: Verify system checks company exists in Companies House registry
+**Test Case Description**: Verify system only approves companies that exists in Companies House registry
 **Test Case Procedure**:
-1. Import companies_house module
-2. Call `verify_company_against_ch("InvalidCompanyName", "00000000")`
-3. Verify function returns False for invalid company
-4. Test with valid company (e.g., "TESCO", "00445790")
-**Expected Output**: Invalid company returns False, valid company returns True
+1. On Login Portal, Select Company then Sign-Up Option
+2. Verify function returns False for invalid company
+3. Submit valid company name from Companies House registry.
+**Test Data**: Company Name: test, Registration No: 00000000; Company Name: Crusties, Registration No: 12237364
+**Expected Output**: Invalid company returns error, valid company is accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
