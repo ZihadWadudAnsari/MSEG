@@ -23,21 +23,22 @@
 
 #### TC27: End-to-End Application Submission and Approval (Integration Test)
 **Test Case ID**: FR1-FR2-INT-TC27
-**Test Case Description**: Verify complete workflow from submission to approval with database persistence
+**Test Case Description**: Verify complete workflow from submission to approval
 **Test Case Procedure**:
-1. Login as company user
-2. Navigate to ApplicationFormPage
-3. Fill all application fields with valid data
-4. Attach required documents
-5. Submit application
-6. Verify application appears in database with status='pending'
-7. Login as manager user
-8. Open ManagerPortalPage
-9. Verify application appears in pending list
-10. Select application and click "Approve"
-11. Verify application status changes to 'approved' in database
-12. Verify stock is created in stock table
-**Expected Output**: Application successfully moves from pending to approved, stock created
+1. Login as Company
+2. Navigate to My Applications
+3. Create New Application with all required fields and attachments
+4. Submit application
+5. Verify success message appears
+6. Logout and Login as Stock Manager
+7. Navigate to Manager Portal
+8. Verify application appears in Pending list
+9. Select application and click "Approve"
+10. Verify application moves to Approved list
+11. Navigate to Stock Market
+12. Verify new stock appears in listing
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Application successfully moves through workflow from submission to approval, creating new stock listing
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -47,38 +48,34 @@
 **Test Case ID**: FR1-FR2-SYS-TC42
 **Test Case Description**: End-to-end system test of successful application flow
 **Test Case Procedure**:
-1. Launch MSEG application (python main.py)
-2. Click "Sign Up" as company
-3. Fill all registration fields with valid data:
-   - Company Name: "Test Industries Ltd"
-   - Registration Number: "12345678"
-   - Username: "testco"
-   - Password: "Pass1234"
-   - Incorporation Date: "2020-01-01"
+1. Launch MSEG application
+2. Click "Sign Up" as Company
+3. Fill all registration fields:
+   - Company Name, Registration Number, Username, Password, Incorporation Date
 4. Submit registration
 5. Login with new credentials
-6. Navigate to "My Applications" page
-7. Fill application form:
-   - Ticker: "TEST"
-   - Shares: 1000000
-   - Valuation: 500000000
-   - Sector: Technology
-8. Attach at least one PDF document
+6. Navigate to My Applications
+7. Create New Application with:
+   - Proposed Ticker (3-4 capital letters)
+   - Proposed Shares (positive number)
+   - Proposed Valuation (100M - 500B)
+   - Select Sector
+8. Attach at least one document
 9. Submit application
 10. Verify success message appears
-11. Logout
-12. Login as manager (manager1/pass123)
-13. Verify "Test Industries Ltd" application appears in Pending list
+11. Logout and Login as Stock Manager
+12. Navigate to Manager Portal
+13. Verify application appears in Pending list
 14. Click on application to view details
-15. Verify all data is correct
-16. Click "Approve" button
-17. Verify application moves to Approved list
-18. Navigate to Stock Market page
-19. Verify "TEST" stock appears in listing with correct data
-20. Verify 24hr, 1M, 6M, 1Y returns are displayed
-21. Logout and login as testco
-22. Navigate to Stock Market
-23. Verify TEST stock is visible in read-only mode
+15. Click "Approve" button
+16. Verify application moves to Approved list
+17. Navigate to Stock Market page
+18. Verify new stock appears in listing with all data
+19. Verify return percentages (24hr, 1M, 6M, 1Y) are displayed
+20. Logout and login as Company
+21. Navigate to Stock Market
+22. Verify stock is visible
+**Test Data**: New Company: Registration No (8 digits), Username (unique), Password, Incorporation Date (at least 3 years ago); Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Complete workflow from registration → application → approval → stock listing succeeds
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -168,18 +165,19 @@
 **Test Case ID**: FR1-FR3-INT-TC28
 **Test Case Description**: Verify complete workflow from submission to rejection with notes
 **Test Case Procedure**:
-1. Login as company user
-2. Submit application with all required data
-3. Verify application stored in database
-4. Login as manager user
-5. Open ManagerPortalPage and view application in pending list
-6. Click "Reject" button
-7. Enter rejection notes in text box
-8. Save rejection
-9. Verify application appears in rejected list
-10. Verify internal_notes in database contains rejection reason
-11. Login as company user
-12. Verify application shows in "My Applications" with rejected status
+1. Login as Company
+2. Navigate to My Applications
+3. Create and submit new application with all required data
+4. Logout and Login as Stock Manager
+5. Navigate to Manager Portal
+6. Verify application appears in Pending list
+7. Select application and click "Reject"
+8. Enter rejection notes in text box
+9. Save rejection
+10. Verify application moves to Rejected list
+11. Logout and Login as Company
+12. Verify application shows rejected status with rejection notes
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
 **Expected Output**: Application successfully rejected with notes visible to both manager and company
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
@@ -191,22 +189,24 @@
 **Test Case Description**: End-to-end system test of application rejection flow
 **Test Case Procedure**:
 1. Launch MSEG application
-2. Login as existing company user
-3. Submit new application with ticker "RJCT"
-4. Logout and login as manager
-5. Select application from Pending list
-6. Click "Reject" button
-7. Enter rejection reason: "Stage 2 - Regulatory Compliance Failed: Company does not meet activity duration requirement"
-8. Click "Save Rejection"
-9. Verify application moves to Rejected list
-10. Navigate to Stock Market page
-11. Verify "RJCT" stock does NOT appear in listing
-12. Logout and login as company
-13. Navigate to My Applications
-14. Verify application shows rejected status
-15. Select rejected application
-16. Verify rejection notes are visible (if UI supports this)
-**Expected Output**: Rejected application does not create stock, rejection notes recorded
+2. Login as Company
+3. Navigate to My Applications
+4. Submit new application with all required data
+5. Logout and Login as Stock Manager
+6. Navigate to Manager Portal
+7. Select application from Pending list
+8. Click "Reject" button
+9. Enter rejection reason in notes field
+10. Save rejection
+11. Verify application moves to Rejected list
+12. Navigate to Stock Market page
+13. Verify rejected application's ticker does NOT appear in stock listing
+14. Logout and Login as Company
+15. Navigate to My Applications
+16. Verify application shows rejected status
+17. View rejection notes
+**Test Data**: Company Username: company1, Company Password: pass456; Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Rejected application does not create stock, rejection notes are visible to company
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
