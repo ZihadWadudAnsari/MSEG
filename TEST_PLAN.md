@@ -121,12 +121,13 @@
 **Test Case ID**: FR2-TC4
 **Test Case Description**: Verify 366 days of price history is generated for new stock
 **Test Case Procedure**:
-1. Import db module
-2. Create stock using `stock_create_from_application()`
-3. Call `stock_get_prices(stock_id)`
-4. Count number of price records returned
-5. Verify prices show realistic daily variation (±1.5%)
-**Expected Output**: 366 price records created with random walk pricing model
+1. Login as Stock Manager
+2. Approve an application to create a new stock
+3. Navigate to Stock Market page
+4. Verify stock displays with price history data (24hr, 1M, 6M, 1Y returns)
+5. Verify prices show realistic variation
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Stock displays with complete price history showing returns for all time periods
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -291,11 +292,12 @@
 **Test Case ID**: FR4-TC11
 **Test Case Description**: Verify at least one attachment is required
 **Test Case Procedure**:
-1. Open ApplicationFormPage
-2. Fill all fields but do not attach any documents
-3. Attempt to submit application
-4. Verify validation check at lines 507-509 prevents submission
-**Expected Output**: Error message "At least one attachment is required" displayed
+1. Login on Company Account
+2. Select New Application
+3. Fill all fields but do not attach any documents
+4. Attempt to submit application
+**Test Data**: Company Username: company1, Company Password: pass456
+**Expected Output**: Error message about missing attachments would be displayed
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -407,11 +409,12 @@
 **Test Case ID**: FR5-TC15
 **Test Case Description**: Verify incorporation date must be in YYYY-MM-DD format
 **Test Case Procedure**:
-1. Open InlineCompanySignup
+1. On Login Portal, Select Company then Sign-Up Option
 2. Enter invalid date formats: "01/01/2020", "2020-1-1", "20-01-2020"
-3. Verify validation at line 91 in pages.py rejects these
-4. Enter valid format "2020-01-01"
-**Expected Output**: Invalid formats rejected with error "Date must be YYYY-MM-DD", valid format accepted
+3. Attempt to submit registration with each invalid format
+4. Enter valid format "2020-01-01" and verify acceptance
+**Test Data**: Invalid formats: "01/01/2020", "2020-1-1", "20-01-2020"; Valid format: "2020-01-01"
+**Expected Output**: Invalid formats rejected with error message, valid format accepted
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -421,11 +424,13 @@
 **Test Case ID**: FR5-TC16
 **Test Case Description**: Verify incorporation date must be between 1850 and today
 **Test Case Procedure**:
-1. Open InlineCompanySignup
-2. Test date "1800-01-01" (too old)
-3. Test future date "2026-12-31"
-4. Verify validation at lines 96-106 rejects both
-**Expected Output**: Error message "Date must be between 1850 and today's date"
+1. On Login Portal, Select Company then Sign-Up Option
+2. Enter incorporation date "1800-01-01" (too old)
+3. Attempt to submit registration
+4. Enter future date "2026-12-31"
+5. Attempt to submit registration
+**Test Data**: Invalid dates: "1800-01-01", "2026-12-31"
+**Expected Output**: Error message stating date must be between 1850 and today's date
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -504,14 +509,16 @@
 
 #### TC17: Stock Deletion Function (Unit Test)
 **Test Case ID**: FR6-TC17
-**Test Case Description**: Verify stock can be deleted from database
+**Test Case Description**: Verify stock can be deleted from system
 **Test Case Procedure**:
-1. Import db module
-2. Create test stock with `stock_create_from_application()`
-3. Call `stock_delete(stock_id)`
-4. Query stock table to verify stock no longer exists
-5. Verify CASCADE delete removed associated price history
-**Expected Output**: Stock record deleted along with all price history records
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Select a stock using checkbox
+4. Click "Delete Selected" button
+5. Confirm deletion
+6. Verify stock no longer appears in stock listing
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Stock is removed from the stock market listing
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -583,13 +590,14 @@
 
 #### TC18: Retrieve All Stocks (Unit Test)
 **Test Case ID**: FR7-TC18
-**Test Case Description**: Verify system retrieves all stocks with prices and sectors
+**Test Case Description**: Verify system displays all stocks with prices and sectors
 **Test Case Procedure**:
-1. Import db module
-2. Create multiple test stocks in different sectors
-3. Call `stocks_all()`
-4. Verify returned list includes stock_id, ticker, current_price, and sector_name
-**Expected Output**: List of all stocks with id, ticker, price, and sector information
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Verify all approved stocks are displayed
+4. Verify each stock shows ticker, price, sector, and return percentages
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: All stocks displayed with ticker, current price, sector, and performance data
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -712,14 +720,15 @@
 
 #### TC19: Time-framed Returns Calculation (1 Month) (Unit Test)
 **Test Case ID**: FR8-TC19
-**Test Case Description**: Verify 1-month return calculation is accurate
+**Test Case Description**: Verify 1-month return calculation is displayed correctly
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=1)`
-4. Manually calculate expected return: ((price_now - price_30days_ago) / price_30days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. View a stock's 1M % (1-month return) column
+4. Verify the percentage is displayed
+5. Verify the value shows positive (+) or negative (-) sign
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: 1-month return percentage is displayed with correct sign
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -727,14 +736,15 @@
 
 #### TC20: Time-framed Returns Calculation (6 Months) (Unit Test)
 **Test Case ID**: FR8-TC20
-**Test Case Description**: Verify 6-month return calculation is accurate
+**Test Case Description**: Verify 6-month return calculation is displayed correctly
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=6)`
-4. Manually calculate expected return: ((price_now - price_180days_ago) / price_180days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. View a stock's 6M % (6-month return) column
+4. Verify the percentage is displayed
+5. Verify the value shows positive (+) or negative (-) sign
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: 6-month return percentage is displayed with correct sign
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -742,14 +752,15 @@
 
 #### TC21: Time-framed Returns Calculation (1 Year) (Unit Test)
 **Test Case ID**: FR8-TC21
-**Test Case Description**: Verify 1-year return calculation is accurate
+**Test Case Description**: Verify 1-year return calculation is displayed correctly
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with known price history
-3. Call `stock_calculate_return(stock_id, months=12)`
-4. Manually calculate expected return: ((price_now - price_365days_ago) / price_365days_ago) * 100
-5. Compare function output to manual calculation
-**Expected Output**: Return percentage matches manual calculation within 0.01%
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. View a stock's 1Y % (1-year return) column
+4. Verify the percentage is displayed
+5. Verify the value shows positive (+) or negative (-) sign
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: 1-year return percentage is displayed with correct sign
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -757,14 +768,15 @@
 
 #### TC22: 24-Hour Change Calculation (Unit Test)
 **Test Case ID**: FR8-TC22
-**Test Case Description**: Verify 24-hour price change calculation
+**Test Case Description**: Verify 24-hour price change is displayed correctly
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with known prices for today and yesterday
-3. Call `stock_calculate_24hr_change(stock_id)`
-4. Manually calculate: ((today_price - yesterday_price) / yesterday_price) * 100
-5. Compare results
-**Expected Output**: 24hr change percentage matches manual calculation
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. View a stock's 24hr % (24-hour change) column
+4. Verify the percentage is displayed
+5. Verify the value shows positive (+) or negative (-) sign
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: 24-hour change percentage is displayed with correct sign
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1056,10 +1068,12 @@
 **Test Case ID**: NR2-TC23
 **Test Case Description**: Verify shares outstanding must be positive
 **Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock with shares_outstanding = 0 or negative value
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
+1. Login on Company Account
+2. Select New Application
+3. Enter 0 or negative value for Proposed Shares
+4. Attempt to submit application
+**Test Data**: Company Username: company1, Company Password: pass456; Proposed Shares: 0 or -1000000
+**Expected Output**: Error message displayed stating shares must be positive
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1069,10 +1083,12 @@
 **Test Case ID**: NR2-TC24
 **Test Case Description**: Verify total valuation must be positive
 **Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock with total_valuation = 0 or negative value
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
+1. Login on Company Account
+2. Select New Application
+3. Enter 0 or negative value for Proposed Valuation
+4. Attempt to submit application
+**Test Data**: Company Username: company1, Company Password: pass456; Proposed Valuation: 0 or -500000000
+**Expected Output**: Error message displayed stating valuation must be positive
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1080,12 +1096,14 @@
 
 #### TC25: Positive Price Validation (Unit Test)
 **Test Case ID**: NR2-TC25
-**Test Case Description**: Verify stock prices must be positive
+**Test Case Description**: Verify stock prices are always positive
 **Test Case Procedure**:
-1. Import db module
-2. Attempt to insert stock_price record with price <= 0
-3. Verify CHECK constraint prevents insertion
-**Expected Output**: Database CHECK constraint error raised
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. View all stock prices
+4. Verify all prices shown are positive values
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: All stock prices displayed are positive values greater than zero
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
@@ -1308,13 +1326,15 @@
 
 #### TC26: Return Calculation Consistency (Unit Test)
 **Test Case ID**: NR7-TC26
-**Test Case Description**: Verify return calculations are repeatable with same input
+**Test Case Description**: Verify return calculations are consistent and repeatable
 **Test Case Procedure**:
-1. Import db module
-2. Create stock with fixed price history
-3. Call `stock_calculate_return(stock_id, months=6)` ten times
-4. Verify all results are identical
-**Expected Output**: All ten calculations return exact same percentage
+1. Login as Stock Manager
+2. Navigate to Stock Market page
+3. Note the return percentages (24hr, 1M, 6M, 1Y) for a specific stock
+4. Refresh the page
+5. Verify the same stock shows identical return percentages
+**Test Data**: Manager Username: manager1, Manager Password: pass123
+**Expected Output**: Return percentages remain identical after page refresh
 **Actual Result**: _(To be filled during testing)_
 **Pass/Fail**: _(To be filled during testing)_
 
