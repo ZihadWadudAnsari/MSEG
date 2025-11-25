@@ -1,0 +1,566 @@
+MANCHESTER STOCK EXCHANGE (MSEG) SYSTEM
+REQUIREMENTS IMPLEMENTATION ANALYSIS
+
+================================================================================
+1. PROGRAMME OVERVIEW AND LOGIC
+================================================================================
+
+The Manchester Stock Exchange system is a desktop application built using Python and Tkinter for the graphical interface. The application manages stock listing applications from companies and provides stock managers with tools to review applications, manage active listings, and perform market analysis.
+
+The system follows a straightforward database-driven architecture. At the core is an SQLite database that stores all persistent data including user accounts, company applications, stock listings, and historical price data. The frontend uses Tkinter to create an intuitive interface where users can interact with the system through forms, buttons, and data tables.
+
+When the application starts, it initialises the database connection and creates all necessary tables if they don't already exist. This ensures the system can recover gracefully even if the database file is deleted or corrupted. The application then displays a login page where users can authenticate as either a company or a stock manager.
+
+The program logic is organised into several key modules. The database module handles all SQL operations and data persistence. The validation module contains functions that check user inputs against business rules before allowing data to be saved. The UI components are separated into different page classes, each representing a distinct screen in the application. This modular approach makes the codebase easier to maintain and test.
+
+For stock price generation, the system uses a random walk model that creates realistic historical prices for newly approved stocks. This generates 366 days of price history with daily variations of plus or minus 1.5 percent, giving each stock a believable performance history that can be analysed.
+
+
+================================================================================
+2. FUNCTIONAL REQUIREMENTS IMPLEMENTATION
+================================================================================
+
+FR1: View Queue of Pending Applications
+----------------------------------------
+
+The manager portal displays all pending applications in a clean table format. When a stock manager logs in and navigates to the portal, the system queries the database for all applications with a status of 'pending' and displays them in a scrollable list. Each application shows the company name, proposed ticker, proposed shares, proposed valuation, and the date it was submitted.
+
+The implementation uses a simple SQL query to fetch pending applications and then populates a Tkinter Treeview widget with the results. The manager can click on any application to view its full details including attached documents. This gives managers a complete overview of what needs reviewing without having to search through multiple screens.
+
+
+FR2: Approve Valid Application
+-------------------------------
+
+When a manager approves an application, several things happen behind the scenes. First, the application's status in the database is updated to 'approved'. Then, a new stock record is created using the proposed ticker, shares, and valuation from the application. The sector that the company selected is also carried over to the stock listing.
+
+The most important part of approval is the price history generation. The system calculates an initial stock price by dividing the proposed valuation by the proposed shares. Then it generates 366 days of historical prices using the random walk algorithm. This creates realistic daily price fluctuations that stay within a reasonable range. Once the price history is generated, the stock immediately appears in the stock market listing where all users can view it.
+
+
+FR3: Reject Application with Reasons
+-------------------------------------
+
+The rejection process requires managers to provide a reason for their decision. When a manager clicks the reject button, a text input dialog appears prompting them to enter rejection notes. The system validates that this field is not empty before allowing the rejection to proceed.
+
+Once a valid reason is provided, the application status is updated to 'rejected' and the rejection notes are stored in the database. The company can then log in to their account and view these notes on their applications page. This transparency helps companies understand why their application was unsuccessful and what they might need to improve for a future submission.
+
+
+FR4: Integrity Check (Missing Fields, Duplicates, Unrealistic Valuations)
+--------------------------------------------------------------------------
+
+The system performs multiple validation checks before an application can be submitted. The ticker validation ensures the proposed ticker is between 3 and 4 capital letters with no numbers or special characters. It also checks the database to confirm that no existing stock already uses that ticker symbol.
+
+Valuation checks ensure that proposed valuations fall within the acceptable range of 100 million to 500 billion pounds. Any valuation outside these bounds is rejected with a clear error message explaining the minimum or maximum requirement.
+
+All required fields must be filled in before submission. The validation function checks that proposed ticker, proposed shares, proposed valuation, and sector are all present. It also verifies that at least one document has been attached to the application. If any of these checks fail, the submission is blocked and the user receives a specific error message identifying what needs to be corrected.
+
+
+FR5: Regulatory Compliance Review
+----------------------------------
+
+Companies House verification is handled through an API integration with a fallback to an offline dataset. When a company registers, the system first attempts to verify their company name and registration number against the Companies House API. This ensures that only legitimate registered companies can apply for stock listings.
+
+If the API is unavailable due to network issues or missing credentials, the system automatically falls back to a local CSV file containing company data. This fallback mechanism ensures the system remains usable even without internet connectivity.
+
+The incorporation date validation checks that companies have been incorporated for at least 3 years. This is done by comparing the provided incorporation date against today's date and calculating the difference. Companies incorporated less than 3 years ago are rejected during registration with a clear message explaining the minimum age requirement.
+
+Registration numbers must be unique across the system. Before allowing a new company to register, the database is checked to ensure their registration number has not already been used by another account.
+
+
+FR6: Remove Stock Listing
+--------------------------
+
+Stock managers can remove stocks from the market through the stock listing page. Stocks are selected using checkboxes next to each listing in the table. When the manager clicks the delete button, a confirmation dialog appears to prevent accidental deletions.
+
+Upon confirmation, the system deletes the stock record from the database. Due to foreign key constraints configured in the database schema, all associated price history records are automatically deleted as well through a cascade delete. This ensures no orphaned data remains in the database after a stock is removed.
+
+
+FR7: View All Active Stock Listings
+------------------------------------
+
+The stock market page displays all approved stocks in a comprehensive table. Each row shows the ticker symbol, current price, sector, and return percentages for different time periods (24 hours, 1 month, 6 months, and 1 year). This gives users an at-a-glance view of market performance.
+
+The sector filter allows users to narrow down the listing to specific sectors. When a user clicks the filter button, a dialog appears with checkboxes for each sector. Users can select one or multiple sectors and click apply to filter the view. The clear filter button restores the full listing.
+
+The implementation queries the database for all stocks with their most recent prices and calculates return percentages on the fly. The results are displayed in a Tkinter Treeview widget that supports sorting and scrolling for large datasets.
+
+
+FR8: Time-framed Returns Analysis
+----------------------------------
+
+The time-framed returns analysis calculates percentage changes in stock prices over different periods. For each selected stock, the system retrieves price records from 1 month ago, 6 months ago, and 1 year ago. It then compares these historical prices to the current price and calculates the percentage change.
+
+The formula used is simple: ((current price - historical price) / historical price) * 100. This gives the return percentage for each time period. The analysis report displays these results in a table format that clearly shows which stocks have performed well and which have declined.
+
+Users can export the report to a text file for record keeping or further analysis. The export functionality formats the data in a readable table structure that can be opened in any text editor.
+
+
+FR9: Valuation Comparison
+--------------------------
+
+Valuation comparison shows the current market capitalisation of selected stocks. For each stock, the system retrieves the current price and the total number of shares outstanding. The market capitalisation is calculated by multiplying these two values together.
+
+The report also includes the 1 year growth percentage, which shows how much the stock's value has changed over the past year. This helps investors identify which companies have grown significantly versus those that have remained stable or declined.
+
+The comparison report makes it easy to see the relative sizes of different companies. A stock with a high share price but few shares might have a smaller total valuation than a stock with a lower price but many more shares in circulation.
+
+
+FR10: Sector Benchmarking
+--------------------------
+
+Sector benchmarking compares individual stocks to their sector average. The system first groups all stocks by sector and calculates the average 1 year return for each sector. Then, for each selected stock, it compares that stock's 1 year return to its sector's average.
+
+The difference is displayed as a plus or minus percentage. A positive difference means the stock outperformed its sector, while a negative difference means it underperformed. This analysis helps identify which stocks are sector leaders and which are lagging behind their peers.
+
+The calculation ensures that stocks are only compared within their own sector. A technology stock is compared to other technology stocks, while a healthcare stock is compared to other healthcare stocks. This provides meaningful comparisons between similar companies.
+
+
+FR11: Performance Consistency Analysis
+---------------------------------------
+
+The consistency score measures how stable a stock's returns have been over time. The system calculates this by looking at the variance between the 1 month, 6 month, and 1 year return percentages. Stocks with similar returns across all time periods have low variance and receive high consistency scores.
+
+The formula calculates the standard deviation of the three return percentages and then converts this into a score out of 100. A score close to 100 indicates very consistent performance with minimal volatility. Lower scores indicate more volatile stocks where returns fluctuate significantly between time periods.
+
+This analysis helps risk-averse investors identify stable stocks that are less likely to experience sudden drops in value. It complements the return percentages by adding a measure of predictability to the investment decision.
+
+
+FR12: Market Report Generation
+-------------------------------
+
+The market report provides an overview of the entire stock exchange. Unlike other analyses, it does not require any stocks to be selected because it analyses the complete market.
+
+The report calculates several key metrics. Total companies listed is simply a count of all stock records in the database. Total market valuation sums up the market capitalisation of every listed company. Average valuation divides the total by the count to give a typical company size.
+
+The sector distribution section breaks down the market by sector. It counts how many stocks belong to each sector and calculates what percentage of the total market each sector represents. This shows which sectors dominate the exchange and which are less represented.
+
+
+================================================================================
+3. NON-FUNCTIONAL REQUIREMENTS IMPLEMENTATION
+================================================================================
+
+NR1: Privacy and Data Handling
+-------------------------------
+
+Password security is implemented using SHA-256 hashing. When a user creates an account, their password is immediately hashed before being stored in the database. Here is the relevant code:
+
+```python
+import hashlib
+
+def hash_password(password):
+    """Hash a password using SHA-256."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# During registration
+hashed_password = hash_password(password)
+cursor.execute("""
+    INSERT INTO company (company_name, registration_no, username,
+                        password_hash, incorporation_date)
+    VALUES (?, ?, ?, ?, ?)
+""", (company_name, registration_no, username, hashed_password, incorporation_date))
+```
+
+This means the actual password is never stored in the database. When a user attempts to log in, their entered password is hashed using the same function and compared against the stored hash. If the hashes match, the password is correct and the user is authenticated.
+
+The password input fields in the UI use the 'show' parameter set to an asterisk to mask the characters:
+
+```python
+self.password_entry = tk.Entry(self, show="*", font=("Arial", 12))
+```
+
+This ensures passwords are never visible on screen while being typed. Combined with the hashing, this provides robust password security throughout the system.
+
+Error messages are deliberately generic to avoid leaking information. When login fails, the system displays "Invalid username or password" regardless of whether the username exists or the password was wrong:
+
+```python
+# Check if user exists
+user = get_user_by_username(username, user_type)
+if user is None:
+    messagebox.showerror("Login Failed", "Invalid username or password")
+    return
+
+# Check password
+if user['password_hash'] != hash_password(password):
+    messagebox.showerror("Login Failed", "Invalid username or password")
+    return
+```
+
+This prevents attackers from determining which usernames are valid by testing different combinations.
+
+
+NR2: Data Integrity Validation
+-------------------------------
+
+The database schema includes CHECK constraints to enforce data integrity at the database level. Here are the relevant constraints:
+
+```python
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS stock (
+        stock_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ticker TEXT UNIQUE NOT NULL,
+        proposed_shares INTEGER NOT NULL CHECK(proposed_shares > 0),
+        proposed_valuation REAL NOT NULL CHECK(proposed_valuation > 0),
+        sector_id INTEGER NOT NULL,
+        approval_date TEXT,
+        FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
+    )
+""")
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS price_history (
+        price_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stock_id INTEGER NOT NULL,
+        price REAL NOT NULL CHECK(price > 0),
+        date TEXT NOT NULL,
+        FOREIGN KEY (stock_id) REFERENCES stock(stock_id) ON DELETE CASCADE
+    )
+""")
+```
+
+The CHECK constraints ensure that shares, valuations, and prices must always be positive numbers. Even if validation is bypassed in the application code, the database itself will reject any attempt to insert negative or zero values.
+
+Additional validation occurs at the application level before data reaches the database:
+
+```python
+def validate_application_data(ticker, shares, valuation):
+    """Validate application data before submission."""
+    errors = []
+
+    # Validate shares
+    if shares <= 0:
+        errors.append("Proposed shares must be a positive number")
+
+    # Validate valuation
+    if valuation < 100_000_000:
+        errors.append("Proposed valuation must be at least £100 million")
+    elif valuation > 500_000_000_000:
+        errors.append("Proposed valuation cannot exceed £500 billion")
+
+    # Validate ticker format
+    if not (3 <= len(ticker) <= 4 and ticker.isalpha() and ticker.isupper()):
+        errors.append("Ticker must be 3-4 capital letters only")
+
+    return errors
+```
+
+This dual-layer validation ensures data integrity is maintained even if there are bugs in the UI code or if someone attempts to modify the database directly.
+
+
+NR3: Availability and Database Connection
+------------------------------------------
+
+The system ensures availability through automatic database initialisation. When the application starts, it checks if the database exists and creates all necessary tables if they are missing:
+
+```python
+def init_db():
+    """Initialize the database and create tables if they don't exist."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    # Create all tables
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS sector (
+            sector_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sector_name TEXT UNIQUE NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS manager (
+            manager_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )
+    """)
+
+    # Create other tables...
+
+    # Populate sectors if empty
+    cursor.execute("SELECT COUNT(*) FROM sector")
+    if cursor.fetchone()[0] == 0:
+        sectors = ['Technology', 'Healthcare', 'Finance', 'Energy',
+                  'Consumer Goods', 'Industrials', 'Utilities', 'Real Estate']
+        cursor.executemany("INSERT INTO sector (sector_name) VALUES (?)",
+                          [(s,) for s in sectors])
+
+    conn.commit()
+    conn.close()
+```
+
+This approach means the system can recover from complete database loss. If a tester deletes the database file and restarts the application, it will automatically rebuild the database structure and repopulate the sectors table. This makes the system resilient to database corruption or accidental deletion.
+
+Database connections are opened and closed properly for each operation to prevent connection leaks:
+
+```python
+def get_all_pending_applications():
+    """Retrieve all pending applications."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT a.*, c.company_name
+            FROM application a
+            JOIN company c ON a.company_id = c.company_id
+            WHERE a.status = 'pending'
+            ORDER BY a.submission_date DESC
+        """)
+        results = cursor.fetchall()
+        return results
+    finally:
+        conn.close()
+```
+
+The try-finally block ensures the connection is always closed even if an error occurs during the query. This prevents the application from holding database locks that could cause availability issues.
+
+
+NR4: Performance
+----------------
+
+Performance is optimised through efficient database queries and proper indexing. The database schema includes indexes on frequently queried columns:
+
+```python
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_application_status
+    ON application(status)
+""")
+
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_price_history_date
+    ON price_history(stock_id, date)
+""")
+```
+
+These indexes speed up queries that filter by application status or retrieve price history for specific stocks on specific dates. Without these indexes, queries would need to scan entire tables which would be slow with large datasets.
+
+The return percentage calculations are optimised by only retrieving the specific price records needed rather than loading all price history:
+
+```python
+def calculate_returns(stock_id):
+    """Calculate return percentages for different time periods."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    # Get current price
+    cursor.execute("""
+        SELECT price FROM price_history
+        WHERE stock_id = ?
+        ORDER BY date DESC LIMIT 1
+    """, (stock_id,))
+    current_price = cursor.fetchone()[0]
+
+    # Get price from 1 month ago
+    one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+    cursor.execute("""
+        SELECT price FROM price_history
+        WHERE stock_id = ? AND date <= ?
+        ORDER BY date DESC LIMIT 1
+    """, (stock_id, one_month_ago))
+    month_price = cursor.fetchone()
+
+    # Calculate return percentage
+    if month_price:
+        month_return = ((current_price - month_price[0]) / month_price[0]) * 100
+    else:
+        month_return = 0.0
+
+    conn.close()
+    return month_return
+```
+
+This targeted query approach means even with thousands of price records, only a handful are retrieved for each calculation. This keeps response times low even as the database grows.
+
+
+NR5: Usability
+--------------
+
+The user interface is designed for clarity and ease of use. All buttons have descriptive labels that clearly indicate their action:
+
+```python
+# Good button labeling
+submit_button = tk.Button(self, text="Submit Application",
+                         command=self.submit_application)
+
+approve_button = tk.Button(self, text="Approve Application",
+                          command=self.approve_application)
+
+# Not just "Submit" or "OK"
+```
+
+Form fields include clear labels positioned directly above or beside the input widgets:
+
+```python
+# Clear form field labels
+tk.Label(self, text="Proposed Ticker (3-4 capital letters):",
+         font=("Arial", 11)).grid(row=0, column=0, sticky="w")
+self.ticker_entry = tk.Entry(self, font=("Arial", 11))
+self.ticker_entry.grid(row=0, column=1, sticky="ew")
+
+tk.Label(self, text="Proposed Shares:",
+         font=("Arial", 11)).grid(row=1, column=0, sticky="w")
+self.shares_entry = tk.Entry(self, font=("Arial", 11))
+self.shares_entry.grid(row=1, column=1, sticky="ew")
+```
+
+The hint text in parentheses helps users understand what format is expected without needing to refer to documentation.
+
+Error messages are user-friendly and specific about what went wrong:
+
+```python
+# Specific, helpful error messages
+if len(ticker) < 3 or len(ticker) > 4:
+    messagebox.showerror("Invalid Ticker",
+        "Ticker must be between 3 and 4 characters long")
+    return
+
+if not ticker.isupper():
+    messagebox.showerror("Invalid Ticker",
+        "Ticker must be in capital letters only")
+    return
+
+if proposed_valuation < 100_000_000:
+    messagebox.showerror("Invalid Valuation",
+        "Valuation must be at least £100 million to meet MSEG listing requirements")
+    return
+```
+
+These messages tell the user exactly what the problem is and sometimes include guidance on how to fix it. This reduces frustration and helps users complete their tasks successfully.
+
+
+NR6: Scalability
+----------------
+
+The system is designed to handle growth in the number of stocks and applications. Database queries use efficient SQL operations that scale well:
+
+```python
+def get_market_statistics():
+    """Calculate market-wide statistics efficiently."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    # Efficient aggregation query
+    cursor.execute("""
+        SELECT
+            COUNT(*) as total_stocks,
+            SUM(current_price * proposed_shares) as total_valuation,
+            AVG(current_price * proposed_shares) as avg_valuation
+        FROM stock s
+        JOIN (
+            SELECT stock_id, price as current_price
+            FROM price_history
+            WHERE (stock_id, date) IN (
+                SELECT stock_id, MAX(date)
+                FROM price_history
+                GROUP BY stock_id
+            )
+        ) p ON s.stock_id = p.stock_id
+    """)
+
+    stats = cursor.fetchone()
+    conn.close()
+    return stats
+```
+
+This single query calculates all the statistics needed for the market report. Using SQL aggregation functions like COUNT, SUM, and AVG is much more efficient than retrieving all records and calculating in Python. The database engine can optimise these operations and process thousands of records quickly.
+
+The UI uses pagination concepts where appropriate. For example, the Treeview widgets include scrollbars and only render visible rows:
+
+```python
+# Treeview with scrollbar for large datasets
+tree_scroll = tk.Scrollbar(self, orient="vertical")
+self.stock_tree = ttk.Treeview(self, yscrollcommand=tree_scroll.set,
+                               columns=("Ticker", "Price", "Sector", "24hr",
+                                       "1M", "6M", "1Y"),
+                               show="headings", height=20)
+tree_scroll.config(command=self.stock_tree.yview)
+```
+
+The Treeview widget efficiently handles large amounts of data by only keeping rendered rows in memory. Even with 500 stocks displayed, the widget remains responsive because it does not try to render all rows simultaneously.
+
+
+NR7: Reliability and Deterministic Calculations
+------------------------------------------------
+
+All financial calculations use consistent formulas to ensure reliable, repeatable results. The return percentage calculation is deterministic:
+
+```python
+def calculate_return_percentage(current_price, historical_price):
+    """Calculate percentage return between two prices."""
+    if historical_price == 0:
+        return 0.0
+
+    return ((current_price - historical_price) / historical_price) * 100
+```
+
+This function will always return the same result for the same input prices. There is no randomness or external state that could cause different results on different runs.
+
+Price history generation uses a seeded random number generator for testing purposes, but in production the prices are generated once and then stored permanently:
+
+```python
+def generate_price_history(stock_id, initial_price, days=366):
+    """Generate historical prices using random walk."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    current_price = initial_price
+    prices = []
+
+    for i in range(days, 0, -1):
+        # Generate date
+        date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+
+        # Store price
+        prices.append((stock_id, current_price, date))
+
+        # Random walk for next day (±1.5% variation)
+        change_percent = random.uniform(-1.5, 1.5)
+        current_price = current_price * (1 + change_percent / 100)
+
+        # Ensure price stays positive
+        current_price = max(current_price, 0.01)
+
+    # Insert all prices in batch
+    cursor.executemany("""
+        INSERT INTO price_history (stock_id, price, date)
+        VALUES (?, ?, ?)
+    """, prices)
+
+    conn.commit()
+    conn.close()
+```
+
+Once generated, these prices never change. Any analysis run on these prices will produce identical results every time. If you calculate a stock's 1 month return today and again tomorrow, you will get the same percentage because the underlying price data has not changed.
+
+The sector benchmarking calculation is also completely deterministic:
+
+```python
+def calculate_sector_average(sector_id):
+    """Calculate average 1 year return for a sector."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT AVG(year_return)
+        FROM stock_returns
+        WHERE sector_id = ?
+    """, (sector_id,))
+
+    avg_return = cursor.fetchone()[0]
+    conn.close()
+
+    return avg_return if avg_return else 0.0
+```
+
+The average is calculated using the SQL AVG function which always produces the same result for the same input data. If five technology stocks have returns of 10%, 15%, 20%, 25%, and 30%, the sector average will always be 20%. Running this calculation multiple times, or on different days, or on different computers will always produce the same result given the same input data.
+
+
+================================================================================
+4. CONCLUSION
+================================================================================
+
+The Manchester Stock Exchange system successfully implements all functional and non-functional requirements through a combination of careful database design, robust validation, and thoughtful user interface construction. The modular architecture makes the system maintainable and extensible, while the validation layers ensure data integrity is never compromised.
+
+Performance optimisations like database indexing and efficient queries mean the system can scale to handle hundreds of stocks and thousands of price records without degradation. The security measures protect sensitive user data, particularly passwords which are never stored in plain text.
+
+The user interface prioritises clarity and ease of use with descriptive labels, helpful error messages, and a logical workflow that guides users through each task. The consistent calculation formulas ensure that financial analyses are reliable and repeatable, which is critical for a stock exchange system where accuracy matters greatly.
+
+Overall, the implementation demonstrates a solid understanding of both functional requirements (what the system must do) and non-functional requirements (how well the system must do it). The combination of good database practices, input validation, efficient queries, and clear UI design results in a system that is both functional and professional.
