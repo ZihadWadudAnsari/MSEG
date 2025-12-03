@@ -376,44 +376,55 @@ def generate_market_report(self):
 NR5: Usability
 --------------
 
-UI text is explicit and consistent, with buttons named by action and labels stating format hints next to fields. This removes ambiguity about what each control does and what format is expected.
+UI text is explicit and consistent, with buttons named by action. Button labels clearly state what will happen when clicked, removing ambiguity about functionality.
 
 ```python
-# Descriptive button labels
-submit_button = tk.Button(self, text="Submit Application",
-                         command=self.submit_application)
-
-approve_button = tk.Button(self, text="Approve Application",
-                          command=self.approve_application)
-
-# Labels with format hints
-tk.Label(self, text="Proposed Ticker (3-4 capital letters):",
-         font=("Arial", 11)).grid(row=0, column=0, sticky="w")
-self.ticker_entry = tk.Entry(self, font=("Arial", 11))
-self.ticker_entry.grid(row=0, column=1, sticky="ew")
-
-tk.Label(self, text="Proposed Shares:",
-         font=("Arial", 11)).grid(row=1, column=0, sticky="w")
-self.shares_entry = tk.Entry(self, font=("Arial", 11))
-self.shares_entry.grid(row=1, column=1, sticky="ew")
+# Descriptive button labels from pages.py
+tk.Button(btns, text="Submit Application", width=18, command=self.submit).pack(side="right")
+tk.Button(abtns, text="Add files…", command=self._pick_files_for_new).pack(side="left")
+tk.Button(abtns, text="Remove selected", command=self._remove_selected_new).pack(side="left", padx=(8,0))
 ```
 
-Validation errors are specific and shown inline so users know exactly what to fix. Each error message explains the problem and sometimes includes the business rule behind it.
+Form field labels are positioned directly next to input boxes and clearly identify what information is needed. The labels use consistent terminology across the application.
 
 ```python
-if len(ticker) < 3 or len(ticker) > 4:
-    messagebox.showerror("Invalid Ticker",
-        "Ticker must be between 3 and 4 characters long")
+# Clear form field labels from pages.py
+tk.Label(self.right, text="Proposed Ticker").grid(row=r, column=0, sticky="w", padx=(16,6), pady=6)
+self.e_ticker = tk.Entry(self.right); self.e_ticker.grid(row=r, column=1, sticky="ew", padx=(6,16), pady=6)
+
+tk.Label(self.right, text="Proposed Shares").grid(row=r, column=0, sticky="w", padx=(16,6), pady=6)
+self.e_shares = tk.Entry(self.right); self.e_shares.grid(row=r, column=1, sticky="ew", padx=(6,16), pady=6)
+
+tk.Label(self.right, text="Proposed Valuation").grid(row=r, column=0, sticky="w", padx=(16,6), pady=6)
+self.e_val = tk.Entry(self.right); self.e_val.grid(row=r, column=1, sticky="ew", padx=(6,16), pady=6)
+```
+
+Password fields are masked so typed characters appear as asterisks, preventing shoulder surfing.
+
+```python
+# Password masking in UI
+self.e_pass = tk.Entry(self, show="*")
+self.e_pass.grid(row=r, column=1, sticky="ew", pady=4, padx=(6,16))
+```
+
+Validation errors are specific and shown inline so users know exactly what to fix. Each error message explains the problem and includes the business rule behind it.
+
+```python
+# Specific validation error messages from pages.py
+if not ticker or len(ticker) < 3 or len(ticker) > 4 or not ticker.isalpha():
+    messagebox.showerror("Invalid Format",
+        "Proposed Ticker must be 3 to 4 capital LETTERS only.")
     return
 
-if not ticker.isupper():
-    messagebox.showerror("Invalid Ticker",
-        "Ticker must be in capital letters only")
+# Valuation validation with business context
+if val < 100_000_000:
+    messagebox.showerror("Deflated Valuation",
+        "The proposed valuation is below 100 million. This does not meet the minimum MSEG listing requirements.")
     return
 
-if proposed_valuation < 100_000_000:
-    messagebox.showerror("Invalid Valuation",
-        "Valuation must be at least £100 million to meet MSEG listing requirements")
+if val > 500_000_000_000:
+    messagebox.showerror("Inflated Valuation",
+        "The proposed valuation exceeds 500 billion. This valuation appears to be inflated and does not meet MSEG listing requirements.")
     return
 ```
 
