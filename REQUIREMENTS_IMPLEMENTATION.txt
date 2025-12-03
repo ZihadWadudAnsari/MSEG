@@ -143,81 +143,401 @@ Non-Functional Requirements
 NR1: Privacy and Data Handling
 -------------------------------
 
-Password security is handled through SHA-256 hashing which transforms passwords into a fixed-length string of characters before they are saved to the database. When a user creates an account, their password is immediately hashed using this algorithm. The actual password text is never stored in the database at any point. This means even if someone gained access to the database file, they would only see the hashed values which cannot be reversed back into the original passwords.
+Passwords are hashed with SHA-256 before storage and never saved in plain text. During registration, the password is immediately transformed into a hash before being written to the database. When a user logs in, the system hashes their input and compares it to the stored hash. If the hashes match, authentication succeeds.
 
-When a user attempts to log in, the system takes the password they entered and hashes it using the same SHA-256 algorithm. It then compares this newly generated hash against the hash that was stored during registration. If the two hashes match, the password is correct and the user is authenticated. If they do not match, login is denied.
+```python
+import hashlib
 
-The password input fields throughout the application are configured to mask what the user types. Instead of showing the actual characters, each keystroke displays as an asterisk symbol. This prevents someone looking over the user's shoulder from seeing their password as it is being typed. Combined with the hashing in the database, this provides robust password security at both the interface and storage levels.
+def hash_password(password):
+    """Hash a password using SHA-256."""
+    return hashlib.sha256(password.encode()).hexdigest()
 
-Error messages in the system are deliberately generic to avoid leaking information about user accounts. When login fails, the system always displays "Invalid username or password" regardless of whether the username exists or the password was incorrect. This prevents potential attackers from testing different usernames to determine which accounts exist in the system. If the error message said "Username not found" versus "Incorrect password", an attacker could use this to build a list of valid usernames.
+# During registration
+hashed_password = hash_password(password)
+cursor.execute("""
+    INSERT INTO company (company_name, registration_no, username,
+                        password_hash, incorporation_date)
+    VALUES (?, ?, ?, ?, ?)
+""", (company_name, registration_no, username, hashed_password, incorporation_date))
+```
+
+Password fields are masked in the UI so characters appear as asterisks rather than plain text. This prevents anyone from seeing passwords while they are being typed.
+
+```python
+self.password_entry = tk.Entry(self, show="*", font=("Arial", 12))
+```
+
+Error messages stay generic to prevent account enumeration. Whether the username does not exist or the password is wrong, the system always shows "Invalid username or password" so attackers cannot test which usernames are valid.
+
+```python
+# Check if user exists
+user = get_user_by_username(username, user_type)
+if user is None:
+    messagebox.showerror("Login Failed", "Invalid username or password")
+    return
+
+# Check password
+if user['password_hash'] != hash_password(password):
+    messagebox.showerror("Login Failed", "Invalid username or password")
+    return
+```
 
 NR2: Data Integrity Validation
 -------------------------------
 
-The database schema enforces data integrity through CHECK constraints built into the table definitions. These constraints act as rules that every piece of data must follow before it can be saved. For the stock table, there are CHECK constraints ensuring that proposed shares and proposed valuations must always be positive numbers greater than zero. The price history table has a similar constraint ensuring that all stock prices are positive.
+The schema enforces checks for positive shares, valuations, and prices, and rejects bad writes at the database layer. CHECK constraints in the table definitions ensure that critical numeric fields cannot be zero or negative.
 
-These database-level constraints provide a safety net that catches any invalid data even if it somehow bypasses the application's validation logic. If a bug in the code tried to insert a negative share value or a zero price, the database itself would reject the operation and return an error. This prevents corrupted data from ever being stored.
+```python
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS stock (
+        stock_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ticker TEXT UNIQUE NOT NULL,
+        proposed_shares INTEGER NOT NULL CHECK(proposed_shares > 0),
+        proposed_valuation REAL NOT NULL CHECK(proposed_valuation > 0),
+        sector_id INTEGER NOT NULL,
+        approval_date TEXT,
+        FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
+    )
+""")
 
-Additional validation happens at the application level before data even reaches the database. When a company fills out an application form, the validation function checks that shares are positive, that the valuation falls within the 100 million to 500 billion pound range, and that the ticker format matches the required pattern of 3 to 4 capital letters. If any validation rule fails, the function collects all the errors and displays them to the user in clear messages explaining what needs to be corrected.
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS price_history (
+        price_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stock_id INTEGER NOT NULL,
+        price REAL NOT NULL CHECK(price > 0),
+        date TEXT NOT NULL,
+        FOREIGN KEY (stock_id) REFERENCES stock(stock_id) ON DELETE CASCADE
+    )
+""")
+```
 
-This dual-layer approach where both the application and database perform validation ensures data integrity is maintained throughout the system. Even in unexpected scenarios like database manipulation attempts or future code changes, the constraints prevent invalid data from corrupting the system.
+The form layer also validates ticker pattern, uniqueness, valuation range, and required fields so invalid data is blocked before insert. This application-level validation provides immediate feedback to users.
+
+```python
+def validate_application_data(ticker, shares, valuation):
+    """Validate application data before submission."""
+    errors = []
+
+    # Validate shares
+    if shares <= 0:
+        errors.append("Proposed shares must be a positive number")
+
+    # Validate valuation
+    if valuation < 100_000_000:
+        errors.append("Proposed valuation must be at least £100 million")
+    elif valuation > 500_000_000_000:
+        errors.append("Proposed valuation cannot exceed £500 billion")
+
+    # Validate ticker format
+    if not (3 <= len(ticker) <= 4 and ticker.isalpha() and ticker.isupper()):
+        errors.append("Ticker must be 3-4 capital letters only")
+
+    return errors
+```
 
 NR3: Availability and Database Connection
 ------------------------------------------
 
-The system ensures high availability through automatic database initialisation that runs every time the application starts. When the program launches, it attempts to connect to the database file in the data directory. If the database does not exist or tables are missing, the initialisation function creates everything from scratch.
+On startup the app initialises the database if missing, creating tables and seeding sectors so the system recovers without manual steps. The init_db function runs at launch and sets up the entire schema if tables do not exist.
 
-This means the system can recover from complete database loss without any manual intervention. If a tester accidentally deletes the database file and then restarts the application, the system will detect the missing database and automatically rebuild the entire structure including all necessary tables. It will also repopulate the sectors table with the standard sector categories like Technology, Healthcare, Finance, and others. The application becomes fully functional again without requiring database restoration from backups.
+```python
+def init_db():
+    """Initialize the database and create tables if they don't exist."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
 
-Database connections are managed carefully throughout the code to prevent connection leaks. Each function that needs database access opens a new connection, performs its operation, and then explicitly closes the connection when finished. The code uses try-finally blocks to ensure connections are closed even if an error occurs during the database operation.
+    # Create all tables
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS sector (
+            sector_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sector_name TEXT UNIQUE NOT NULL
+        )
+    """)
 
-This connection management prevents the application from holding unnecessary database locks. If connections were left open, they could cause availability issues where other parts of the system cannot access the database because existing connections have locked certain tables. By properly closing every connection, the system ensures database resources are always available for the next operation.
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS manager (
+            manager_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )
+    """)
+
+    # Create other tables...
+
+    # Populate sectors if empty
+    cursor.execute("SELECT COUNT(*) FROM sector")
+    if cursor.fetchone()[0] == 0:
+        sectors = ['Technology', 'Healthcare', 'Finance', 'Energy',
+                  'Consumer Goods', 'Industrials', 'Utilities', 'Real Estate']
+        cursor.executemany("INSERT INTO sector (sector_name) VALUES (?)",
+                          [(s,) for s in sectors])
+
+    conn.commit()
+    conn.close()
+```
+
+Each database operation opens, commits or rolls back, and closes the connection to avoid locks and keep the app responsive. The try-finally pattern ensures connections are released even if errors occur.
+
+```python
+def get_all_pending_applications():
+    """Retrieve all pending applications."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT a.*, c.company_name
+            FROM application a
+            JOIN company c ON a.company_id = c.company_id
+            WHERE a.status = 'pending'
+            ORDER BY a.submission_date DESC
+        """)
+        results = cursor.fetchall()
+        return results
+    finally:
+        conn.close()
+```
 
 NR4: Performance
 ----------------
 
-Performance optimisation starts with the database schema which includes indexes on frequently queried columns. An index on the application status column speeds up queries that filter pending, approved, or rejected applications. Another index on the price history table covering stock ID and date makes it much faster to retrieve historical prices for specific stocks on specific dates.
+Indexes on status and on price history by stock and date speed common reads. These indexes allow the database to quickly locate records without scanning entire tables.
 
-Without these indexes, the database would need to scan every row in the table to find matching records. With large datasets containing thousands of applications or hundreds of thousands of price records, these full table scans would become noticeably slow. The indexes create a sorted lookup structure that allows the database to jump directly to relevant rows without scanning everything.
+```python
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_application_status
+    ON application(status)
+""")
 
-The return percentage calculations are optimised to retrieve only the specific price records needed rather than loading all price history into memory. When calculating a one month return, the system queries for just two prices: the current price and the price from 30 days ago. It does not load the 366 days of price history and then filter through them in Python. This targeted query approach keeps response times low even as the amount of historical data grows.
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_price_history_date
+    ON price_history(stock_id, date)
+""")
+```
 
-For the market report feature, a single SQL query calculates all the needed statistics using aggregation functions like COUNT, SUM, and AVG. The database engine processes these aggregations very efficiently, handling thousands of records in milliseconds. This is much faster than retrieving all stock records into Python and then looping through them to calculate totals and averages manually.
+Return calculations fetch only current and target dates rather than full histories. This targeted approach means even with 366 days of price data per stock, only a couple of records are retrieved per calculation.
+
+```python
+def calculate_returns(stock_id):
+    """Calculate return percentages for different time periods."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    # Get current price
+    cursor.execute("""
+        SELECT price FROM price_history
+        WHERE stock_id = ?
+        ORDER BY date DESC LIMIT 1
+    """, (stock_id,))
+    current_price = cursor.fetchone()[0]
+
+    # Get price from 1 month ago
+    one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+    cursor.execute("""
+        SELECT price FROM price_history
+        WHERE stock_id = ? AND date <= ?
+        ORDER BY date DESC LIMIT 1
+    """, (stock_id, one_month_ago))
+    month_price = cursor.fetchone()
+
+    # Calculate return percentage
+    if month_price:
+        month_return = ((current_price - month_price[0]) / month_price[0]) * 100
+    else:
+        month_return = 0.0
+
+    conn.close()
+    return month_return
+```
+
+Market metrics use SQL COUNT, SUM, and AVG in one query rather than loading all records and calculating in Python. This leverages the database engine's optimised aggregation functions.
+
+```python
+def get_market_statistics():
+    """Calculate market-wide statistics efficiently."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            COUNT(*) as total_stocks,
+            SUM(current_price * proposed_shares) as total_valuation,
+            AVG(current_price * proposed_shares) as avg_valuation
+        FROM stock s
+        JOIN (
+            SELECT stock_id, price as current_price
+            FROM price_history
+            WHERE (stock_id, date) IN (
+                SELECT stock_id, MAX(date)
+                FROM price_history
+                GROUP BY stock_id
+            )
+        ) p ON s.stock_id = p.stock_id
+    """)
+
+    stats = cursor.fetchone()
+    conn.close()
+    return stats
+```
 
 NR5: Usability
 --------------
 
-The user interface prioritises clarity through descriptive labelling throughout the application. Every button clearly states what action it will perform rather than using generic labels like "Submit" or "OK". For example, the application form has a button labelled "Submit Application" and the manager portal has buttons labelled "Approve Application" and "Reject Application". This removes any ambiguity about what will happen when the user clicks.
+UI text is explicit and consistent, with buttons named by action and labels stating format hints next to fields. This removes ambiguity about what each control does and what format is expected.
 
-Form field labels are positioned directly next to or above their corresponding input boxes and include helpful hints about the expected format. The proposed ticker field label reads "Proposed Ticker (3-4 capital letters):" which tells users both what information is needed and what format it should take. Users do not need to refer to separate documentation or guess what format is expected.
+```python
+# Descriptive button labels
+submit_button = tk.Button(self, text="Submit Application",
+                         command=self.submit_application)
 
-Error messages are designed to be specific and helpful. When validation fails, the system does not just say "Invalid input" but instead provides a precise explanation of the problem. If a ticker is too short, the message states "Ticker must be between 3 and 4 characters long". If a valuation is below the minimum, the message explains "Valuation must be at least £100 million to meet MSEG listing requirements". Some messages even include the reason for the rule, helping users understand why their input was rejected.
+approve_button = tk.Button(self, text="Approve Application",
+                          command=self.approve_application)
 
-This attention to clear communication reduces user frustration and helps people complete their tasks successfully on the first attempt. When errors do occur, users immediately understand what went wrong and how to fix it rather than having to experiment with different inputs or contact support for clarification.
+# Labels with format hints
+tk.Label(self, text="Proposed Ticker (3-4 capital letters):",
+         font=("Arial", 11)).grid(row=0, column=0, sticky="w")
+self.ticker_entry = tk.Entry(self, font=("Arial", 11))
+self.ticker_entry.grid(row=0, column=1, sticky="ew")
+
+tk.Label(self, text="Proposed Shares:",
+         font=("Arial", 11)).grid(row=1, column=0, sticky="w")
+self.shares_entry = tk.Entry(self, font=("Arial", 11))
+self.shares_entry.grid(row=1, column=1, sticky="ew")
+```
+
+Validation errors are specific and shown inline so users know exactly what to fix. Each error message explains the problem and sometimes includes the business rule behind it.
+
+```python
+if len(ticker) < 3 or len(ticker) > 4:
+    messagebox.showerror("Invalid Ticker",
+        "Ticker must be between 3 and 4 characters long")
+    return
+
+if not ticker.isupper():
+    messagebox.showerror("Invalid Ticker",
+        "Ticker must be in capital letters only")
+    return
+
+if proposed_valuation < 100_000_000:
+    messagebox.showerror("Invalid Valuation",
+        "Valuation must be at least £100 million to meet MSEG listing requirements")
+    return
+```
 
 NR6: Scalability
 ----------------
 
-The system is designed to scale as the number of stocks and applications grows over time. Database queries use efficient SQL operations that can handle large datasets without significant performance degradation. For the market statistics report, a single query uses aggregation functions to calculate the total number of stocks, total market valuation, and average valuation across all listings.
+Queries use set operations and aggregation so growing datasets do not force client-side loops. The database handles calculations across thousands of records efficiently through SQL rather than fetching everything into Python.
 
-Using SQL aggregation functions leverages the database engine's optimised processing capabilities. The database can calculate these statistics across thousands of records much faster than if the application retrieved all records into Python and then looped through them to calculate totals. This approach scales well because the performance remains good even as the dataset grows from hundreds to thousands of stocks.
+```python
+def get_market_statistics():
+    """Calculate market-wide statistics efficiently using SQL aggregation."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
 
-The user interface components are built to handle large amounts of data efficiently. The Treeview widgets that display stock listings and application tables include scrollbars and use a rendering approach where only the visible rows are kept in memory. When displaying 500 stocks, the widget does not try to render all 500 rows at once. Instead it renders only the 20 or 30 rows that fit on screen, and renders additional rows as the user scrolls.
+    # Single query with aggregation functions
+    cursor.execute("""
+        SELECT
+            COUNT(*) as total_stocks,
+            SUM(current_price * proposed_shares) as total_valuation,
+            AVG(current_price * proposed_shares) as avg_valuation
+        FROM stock s
+        JOIN (
+            SELECT stock_id, price as current_price
+            FROM price_history
+            WHERE (stock_id, date) IN (
+                SELECT stock_id, MAX(date)
+                FROM price_history
+                GROUP BY stock_id
+            )
+        ) p ON s.stock_id = p.stock_id
+    """)
 
-This virtualisation technique means the interface remains responsive regardless of how much data exists in the database. Adding more stocks does not slow down the interface because the rendering workload stays constant based on screen size rather than growing with the dataset size. The system can comfortably handle the expected growth to hundreds of stocks without requiring architectural changes.
+    stats = cursor.fetchone()
+    conn.close()
+    return stats
+```
+
+Tables render via the Treeview with scrolling so only visible rows are drawn, which keeps interaction smooth as records increase. The widget virtualises rows and only renders what fits on screen.
+
+```python
+# Treeview with scrollbar for large datasets
+tree_scroll = tk.Scrollbar(self, orient="vertical")
+self.stock_tree = ttk.Treeview(self, yscrollcommand=tree_scroll.set,
+                               columns=("Ticker", "Price", "Sector", "24hr",
+                                       "1M", "6M", "1Y"),
+                               show="headings", height=20)
+tree_scroll.config(command=self.stock_tree.yview)
+```
 
 NR7: Reliability and Deterministic Calculations
 ------------------------------------------------
 
-All financial calculations in the system use consistent formulas that produce the same results every time they are run. The return percentage calculation follows a standard formula: it takes the difference between current and historical price, divides by the historical price, and multiplies by 100 to get a percentage. This calculation is completely deterministic, meaning the same input prices will always produce the exact same output percentage.
+Returns use a fixed formula and stored historical prices, so the same inputs always yield the same outputs. The calculation is deterministic with no randomness after the initial price generation.
 
-Price history generation uses a random walk algorithm when a stock is first approved, but once those prices are generated they are stored permanently in the database and never change. The random walk creates 366 days of historical prices with daily variations of plus or minus 1.5 percent. These prices are saved to the database in a single batch operation during the approval process.
+```python
+def calculate_return_percentage(current_price, historical_price):
+    """Calculate percentage return between two prices."""
+    if historical_price == 0:
+        return 0.0
 
-After this initial generation, any analysis that uses these prices will produce identical results every time it runs. If you calculate a stock's one month return today, close the application, and calculate the same stock's one month return again tomorrow, you will get exactly the same percentage. The underlying price data has not changed, so the calculation result remains consistent.
+    return ((current_price - historical_price) / historical_price) * 100
+```
 
-Sector benchmarking calculations are also completely deterministic. The system calculates the average one year return for each sector using the SQL AVG function which always produces the same result for the same input data. If five technology stocks have one year returns of 10%, 15%, 20%, 25%, and 30%, the technology sector average will always calculate to 20%. Running this calculation multiple times, on different days, or even on different computers will always produce the same result as long as the same stock returns are in the database.
+Price history is generated once on approval then persisted. The random walk creates 366 days of prices with daily variations within plus or minus 1.5 percent, and these values never change after being saved.
 
-This reliability in calculations is essential for a stock exchange system where users need to trust that the performance data and analysis results are accurate and consistent. Investors making decisions based on these analyses need confidence that the numbers will not change randomly between viewings.
+```python
+def generate_price_history(stock_id, initial_price, days=366):
+    """Generate historical prices using random walk."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    current_price = initial_price
+    prices = []
+
+    for i in range(days, 0, -1):
+        # Generate date
+        date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+
+        # Store price
+        prices.append((stock_id, current_price, date))
+
+        # Random walk for next day (±1.5% variation)
+        change_percent = random.uniform(-1.5, 1.5)
+        current_price = current_price * (1 + change_percent / 100)
+
+        # Ensure price stays positive
+        current_price = max(current_price, 0.01)
+
+    # Insert all prices in batch
+    cursor.executemany("""
+        INSERT INTO price_history (stock_id, price, date)
+        VALUES (?, ?, ?)
+    """, prices)
+
+    conn.commit()
+    conn.close()
+```
+
+Sector averages and other aggregates run with stable SQL functions. The AVG function always produces the same result for the same input data, so repeated calculations return identical values.
+
+```python
+def calculate_sector_average(sector_id):
+    """Calculate average 1 year return for a sector."""
+    conn = sqlite3.connect('data/mseg.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT AVG(year_return)
+        FROM stock_returns
+        WHERE sector_id = ?
+    """, (sector_id,))
+
+    avg_return = cursor.fetchone()[0]
+    conn.close()
+
+    return avg_return if avg_return else 0.0
+```
 
 
 ================================================================================
