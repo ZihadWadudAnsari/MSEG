@@ -301,83 +301,76 @@ def get_all_pending_applications():
 NR4: Performance
 ----------------
 
-Indexes on status and on price history by stock and date speed common reads. These indexes allow the database to quickly locate records without scanning entire tables.
+Performance is optimised through efficient database queries that retrieve only necessary data. The stocks_all function uses a subquery to get the current price for each stock rather than loading all price history.
 
 ```python
-cursor.execute("""
-    CREATE INDEX IF NOT EXISTS idx_application_status
-    ON application(status)
-""")
-
-cursor.execute("""
-    CREATE INDEX IF NOT EXISTS idx_price_history_date
-    ON price_history(stock_id, date)
-""")
+def stocks_all():
+    """Get all stocks with their current prices and sector information."""
+    with db() as con:
+        return con.execute("""
+            SELECT s.*, sect.sector_name,
+                   (SELECT price FROM stock_price WHERE stock_id = s.stock_id
+                    ORDER BY price_date DESC LIMIT 1) as current_price
+            FROM stock s
+            LEFT JOIN sector sect ON s.sector_id = sect.sector_id
+            ORDER BY s.ticker
+        """).fetchall()
 ```
 
-Return calculations fetch only current and target dates rather than full histories. This targeted approach means even with 366 days of price data per stock, only a couple of records are retrieved per calculation.
+Return calculations fetch only the required number of days of price data rather than loading the full 366-day history. This targeted approach means when calculating a 30-day return, only 31 price records are retrieved.
 
 ```python
-def calculate_returns(stock_id):
-    """Calculate return percentages for different time periods."""
-    conn = sqlite3.connect('data/mseg.db')
-    cursor = conn.cursor()
+def stock_calculate_return(stock_id: int, days: int) -> float:
+    """Calculate return percentage over the last N days."""
+    prices = stock_get_prices(stock_id, days + 1)
+    if len(prices) < 2:
+        return 0.0
 
-    # Get current price
-    cursor.execute("""
-        SELECT price FROM price_history
-        WHERE stock_id = ?
-        ORDER BY date DESC LIMIT 1
-    """, (stock_id,))
-    current_price = cursor.fetchone()[0]
+    start_price = prices[0]["price"]
+    end_price = prices[-1]["price"]
 
-    # Get price from 1 month ago
-    one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
-    cursor.execute("""
-        SELECT price FROM price_history
-        WHERE stock_id = ? AND date <= ?
-        ORDER BY date DESC LIMIT 1
-    """, (stock_id, one_month_ago))
-    month_price = cursor.fetchone()
+    if start_price == 0:
+        return 0.0
 
-    # Calculate return percentage
-    if month_price:
-        month_return = ((current_price - month_price[0]) / month_price[0]) * 100
-    else:
-        month_return = 0.0
+    return ((end_price - start_price) / start_price) * 100
 
-    conn.close()
-    return month_return
+def stock_get_prices(stock_id: int, days: int = None):
+    """Get price history for a stock. If days is None, get all prices."""
+    with db() as con:
+        if days:
+            cutoff = (datetime.now().date() - timedelta(days=days)).isoformat()
+            return con.execute(
+                "SELECT * FROM stock_price WHERE stock_id=? AND price_date >= ? ORDER BY price_date",
+                (stock_id, cutoff)
+            ).fetchall()
+        else:
+            return con.execute(
+                "SELECT * FROM stock_price WHERE stock_id=? ORDER BY price_date",
+                (stock_id,)
+            ).fetchall()
 ```
 
-Market metrics use SQL COUNT, SUM, and AVG in one query rather than loading all records and calculating in Python. This leverages the database engine's optimised aggregation functions.
+Market metrics are calculated efficiently by fetching all stocks once and then processing them in Python. The calculation loops through stocks only once to compute totals and sector distributions.
 
 ```python
-def get_market_statistics():
-    """Calculate market-wide statistics efficiently."""
-    conn = sqlite3.connect('data/mseg.db')
-    cursor = conn.cursor()
+def generate_market_report(self):
+    """Generate overall market report."""
+    stocks = stocks_all()
 
-    cursor.execute("""
-        SELECT
-            COUNT(*) as total_stocks,
-            SUM(current_price * proposed_shares) as total_valuation,
-            AVG(current_price * proposed_shares) as avg_valuation
-        FROM stock s
-        JOIN (
-            SELECT stock_id, price as current_price
-            FROM price_history
-            WHERE (stock_id, date) IN (
-                SELECT stock_id, MAX(date)
-                FROM price_history
-                GROUP BY stock_id
-            )
-        ) p ON s.stock_id = p.stock_id
-    """)
+    if not stocks:
+        messagebox.showinfo("No Data", "No stocks are currently listed.")
+        return
 
-    stats = cursor.fetchone()
-    conn.close()
-    return stats
+    total_companies = len(stocks)
+    total_valuation = sum((s["current_price"] or 0) * s["shares_outstanding"] for s in stocks)
+    avg_valuation = total_valuation / total_companies if total_companies > 0 else 0
+
+    # Sector distribution
+    sector_vals = {}
+    for stock in stocks:
+        sector_name = stock["sector_name"] or "Unknown"
+        stock_val = (stock["current_price"] or 0) * stock["shares_outstanding"]
+        sector_vals[sector_name] = sector_vals.get(sector_name, 0) + stock_val
 ```
 
 NR5: Usability
@@ -427,38 +420,29 @@ if proposed_valuation < 100_000_000:
 NR6: Scalability
 ----------------
 
-Queries use set operations and aggregation so growing datasets do not force client-side loops. The database handles calculations across thousands of records efficiently through SQL rather than fetching everything into Python.
+The system is designed to scale by fetching data efficiently and processing it in optimised loops. The stocks_all function retrieves all stocks with their current prices in a single database query, and calculations loop through the data only once.
 
 ```python
-def get_market_statistics():
-    """Calculate market-wide statistics efficiently using SQL aggregation."""
-    conn = sqlite3.connect('data/mseg.db')
-    cursor = conn.cursor()
+def stocks_all():
+    """Get all stocks with their current prices and sector information."""
+    with db() as con:
+        return con.execute("""
+            SELECT s.*, sect.sector_name,
+                   (SELECT price FROM stock_price WHERE stock_id = s.stock_id
+                    ORDER BY price_date DESC LIMIT 1) as current_price
+            FROM stock s
+            LEFT JOIN sector sect ON s.sector_id = sect.sector_id
+            ORDER BY s.ticker
+        """).fetchall()
 
-    # Single query with aggregation functions
-    cursor.execute("""
-        SELECT
-            COUNT(*) as total_stocks,
-            SUM(current_price * proposed_shares) as total_valuation,
-            AVG(current_price * proposed_shares) as avg_valuation
-        FROM stock s
-        JOIN (
-            SELECT stock_id, price as current_price
-            FROM price_history
-            WHERE (stock_id, date) IN (
-                SELECT stock_id, MAX(date)
-                FROM price_history
-                GROUP BY stock_id
-            )
-        ) p ON s.stock_id = p.stock_id
-    """)
-
-    stats = cursor.fetchone()
-    conn.close()
-    return stats
+# Market report processes all stocks in a single pass
+stocks = stocks_all()
+total_companies = len(stocks)
+total_valuation = sum((s["current_price"] or 0) * s["shares_outstanding"] for s in stocks)
+avg_valuation = total_valuation / total_companies if total_companies > 0 else 0
 ```
 
-Tables render via the Treeview with scrolling so only visible rows are drawn, which keeps interaction smooth as records increase. The widget virtualises rows and only renders what fits on screen.
+Tables render via the Treeview widget with scrolling so only visible rows are drawn, which keeps interaction smooth as records increase. The widget virtualises rows and only renders what fits on screen.
 
 ```python
 # Treeview with scrollbar for large datasets
