@@ -484,70 +484,66 @@ def load_stocks(self):
 NR7: Reliability and Deterministic Calculations
 ------------------------------------------------
 
-Returns use a fixed formula and stored historical prices, so the same inputs always yield the same outputs. The calculation is deterministic with no randomness after the initial price generation.
+Returns use a fixed formula and stored historical prices, so the same inputs always yield the same outputs. The stock_calculate_return function uses a deterministic formula with no randomness after the initial price generation.
 
 ```python
-def calculate_return_percentage(current_price, historical_price):
-    """Calculate percentage return between two prices."""
-    if historical_price == 0:
+def stock_calculate_return(stock_id: int, days: int) -> float:
+    """Calculate return percentage over the last N days."""
+    prices = stock_get_prices(stock_id, days + 1)
+    if len(prices) < 2:
         return 0.0
 
-    return ((current_price - historical_price) / historical_price) * 100
+    start_price = prices[0]["price"]
+    end_price = prices[-1]["price"]
+
+    if start_price == 0:
+        return 0.0
+
+    return ((end_price - start_price) / start_price) * 100
 ```
 
-Price history is generated once on approval then persisted. The random walk creates 366 days of prices with daily variations within plus or minus 1.5 percent, and these values never change after being saved.
+Price history is generated once on approval then persisted. The random walk creates 366 days of prices with daily variations within plus or minus 1.5 percent. Once these values are saved to the database they never change, ensuring all future calculations are consistent.
 
 ```python
-def generate_price_history(stock_id, initial_price, days=366):
-    """Generate historical prices using random walk."""
-    conn = sqlite3.connect('data/mseg.db')
-    cursor = conn.cursor()
+# From stock_create function in db.py
+# Generate 365 days of historical prices
+current_price = initial_price
+current_date = datetime.now().date()
 
-    current_price = initial_price
-    prices = []
+prices = []
+for i in range(365, -1, -1):  # Go backwards from 365 days ago to today
+    price_date = (current_date - timedelta(days=i)).isoformat()
 
-    for i in range(days, 0, -1):
-        # Generate date
-        date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+    if i < 365:  # Don't change price on first day
+        # Random return between -1.5% and +1.5%
+        return_pct = random.uniform(-0.015, 0.015)
+        current_price = current_price * (1 + return_pct)
+        current_price = max(0.01, current_price)  # Ensure price stays positive
 
-        # Store price
-        prices.append((stock_id, current_price, date))
+    prices.append((stock_id, price_date, round(current_price, 2)))
 
-        # Random walk for next day (±1.5% variation)
-        change_percent = random.uniform(-1.5, 1.5)
-        current_price = current_price * (1 + change_percent / 100)
-
-        # Ensure price stays positive
-        current_price = max(current_price, 0.01)
-
-    # Insert all prices in batch
-    cursor.executemany("""
-        INSERT INTO price_history (stock_id, price, date)
-        VALUES (?, ?, ?)
-    """, prices)
-
-    conn.commit()
-    conn.close()
+con.executemany(
+    "INSERT OR REPLACE INTO stock_price(stock_id, price_date, price) VALUES(?,?,?)",
+    prices
+)
 ```
 
-Sector averages and other aggregates run with stable SQL functions. The AVG function always produces the same result for the same input data, so repeated calculations return identical values.
+Sector averages and other aggregates run with stable SQL functions. The calculation groups stocks by sector and computes averages using Python's built-in sum and division, which always produce the same result for the same input data.
 
 ```python
-def calculate_sector_average(sector_id):
-    """Calculate average 1 year return for a sector."""
-    conn = sqlite3.connect('data/mseg.db')
-    cursor = conn.cursor()
+# From analysis_sector_benchmarking in stock_market.py
+# Calculate sector averages
+sector_returns = {}
 
-    cursor.execute("""
-        SELECT AVG(year_return)
-        FROM stock_returns
-        WHERE sector_id = ?
-    """, (sector_id,))
+for stock in stocks:
+    if stock["sector_id"]:
+        r1y = stock_calculate_return(stock["stock_id"], 365)
+        if stock["sector_id"] not in sector_returns:
+            sector_returns[stock["sector_id"]] = []
+        sector_returns[stock["sector_id"]].append(r1y)
 
-    avg_return = cursor.fetchone()[0]
-    conn.close()
-
-    return avg_return if avg_return else 0.0
+sector_avgs = {sid: sum(rets)/len(rets) if rets else 0
+              for sid, rets in sector_returns.items()}
 ```
 
 
