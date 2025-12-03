@@ -431,7 +431,7 @@ if val > 500_000_000_000:
 NR6: Scalability
 ----------------
 
-The system is designed to scale by fetching data efficiently and processing it in optimised loops. The stocks_all function retrieves all stocks with their current prices in a single database query, and calculations loop through the data only once.
+Queries use set operations and aggregation so growing datasets do not force client-side loops. The stocks_all function retrieves all stocks with their current prices in a single database query using a subquery, which means the database handles the aggregation rather than fetching all price records and filtering them in Python.
 
 ```python
 def stocks_all():
@@ -445,24 +445,40 @@ def stocks_all():
             LEFT JOIN sector sect ON s.sector_id = sect.sector_id
             ORDER BY s.ticker
         """).fetchall()
-
-# Market report processes all stocks in a single pass
-stocks = stocks_all()
-total_companies = len(stocks)
-total_valuation = sum((s["current_price"] or 0) * s["shares_outstanding"] for s in stocks)
-avg_valuation = total_valuation / total_companies if total_companies > 0 else 0
 ```
 
-Tables render via the Treeview widget with scrolling so only visible rows are drawn, which keeps interaction smooth as records increase. The widget virtualises rows and only renders what fits on screen.
+Tables render via the Treeview with scrolling so only visible rows are drawn, which keeps interaction smooth as records increase. The Treeview widget has both vertical and horizontal scrollbars that allow navigation through large datasets without rendering all rows at once.
 
 ```python
-# Treeview with scrollbar for large datasets
-tree_scroll = tk.Scrollbar(self, orient="vertical")
-self.stock_tree = ttk.Treeview(self, yscrollcommand=tree_scroll.set,
-                               columns=("Ticker", "Price", "Sector", "24hr",
-                                       "1M", "6M", "1Y"),
-                               show="headings", height=20)
-tree_scroll.config(command=self.stock_tree.yview)
+# Treeview setup with scrollbars from stock_market.py
+self.tree = ttk.Treeview(self.table_frame, columns=columns,
+                         show=("tree headings" if not readonly else "headings"),
+                         selectmode="none")
+
+# Scrollbars
+vsb = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.tree.yview)
+hsb = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.tree.xview)
+self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+self.tree.grid(row=0, column=0, sticky="nsew")
+vsb.grid(row=0, column=1, sticky="ns")
+hsb.grid(row=1, column=0, sticky="ew")
+```
+
+Stock loading filters data in a single pass through the list rather than repeatedly querying the database. The load_stocks function retrieves all stocks once and then applies filters in memory.
+
+```python
+def load_stocks(self):
+    """Load and display all stocks."""
+    # Clear existing items
+    for item in self.tree.get_children():
+        self.tree.delete(item)
+
+    stocks = stocks_all()
+
+    # Apply sector filter if active
+    if self.current_filter_sectors:
+        stocks = [s for s in stocks if s["sector_id"] in self.current_filter_sectors]
 ```
 
 NR7: Reliability and Deterministic Calculations
